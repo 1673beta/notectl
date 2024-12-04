@@ -1,28 +1,11 @@
 mod config;
+mod cli;
 mod db;
 mod entities;
+mod util;
 
 #[tokio::main]
 async fn main() {
-    let config = config::load_config();
-    println!("{:?}", config);
-    let db = db::postgres::connect_pg().await;
-    match db {
-        Ok(db) => {
-            println!("Connected to database");
-            let _ = db::postgres::close_pg(db).await;
-        }
-        Err(e) => {
-            println!("Failed to connect to database: {:?}", e);
-        }
-    }
-    let redis = db::redis::connect().await;
-    match redis {
-        Ok(_) => {
-            println!("Connected to Redis");
-        }
-        Err(e) => {
-            println!("Failed to connect to Redis: {:?}", e);
-        }
-    }
+    let id = util::id::aid::parse("a1dry0dc00");
+    println!("id: {:?}", id);
 }

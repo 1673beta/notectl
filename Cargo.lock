@@ -1171,6 +1171,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "clap",
+ "rand",
  "redis",
  "sea-orm",
  "serde",
@@ -1508,6 +1509,7 @@ dependencies = [
  "libc",
  "rand_chacha",
  "rand_core",
+ "serde",
 ]
 
 [[package]]
