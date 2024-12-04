@@ -1,5 +1,5 @@
 use redis::aio::MultiplexedConnection;
-use redis::{Client, RedisError, RedisResult};
+use redis::{Client, RedisResult};
 
 use crate::config;
 

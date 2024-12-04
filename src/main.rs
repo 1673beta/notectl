@@ -10,7 +10,7 @@ async fn main() {
     match db {
         Ok(db) => {
             println!("Connected to database");
-            db.close().await.unwrap();
+            let _ = db::postgres::close_pg(db).await;
         }
         Err(e) => {
             println!("Failed to connect to database: {:?}", e);
