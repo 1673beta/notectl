@@ -12,3 +12,4 @@ sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio-rustl
 serde = { version = "1.0.215", features = ["derive", "serde_derive"]}
 serde_yml = "0.0.12"
 tokio = { version = "1.42.0", features = ["full"] }
+vapid = "0.6.0"
