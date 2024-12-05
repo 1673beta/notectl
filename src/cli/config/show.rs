@@ -10,14 +10,17 @@ pub struct ConfigCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum ConfigSubCommand {
-    Show,
+    Show {
+        #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
+        config_path: String,
+    },
 }
 
 impl ConfigCommand {
     pub fn exec(&self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
-            ConfigSubCommand::Show => {
-                let config: MisskeyConfig = load_config()?;
+            ConfigSubCommand::Show { config_path} => {
+                let config: MisskeyConfig = load_config(&config_path)?;
                 let _ = print_config(&config);
             }
         }

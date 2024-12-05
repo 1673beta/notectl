@@ -88,8 +88,8 @@ impl Default for IdMethod {
     }
 }
 
-pub fn load_config() -> Result<MisskeyConfig, Box<dyn std::error::Error>> {
-    let config_path = Path::new(".config/default.yml");
+pub fn load_config(config_path: &str) -> Result<MisskeyConfig, Box<dyn std::error::Error>> {
+    let config_path = Path::new(config_path);
     let config_content = fs::read_to_string(config_path).expect("Failed to read config file");
     let config: MisskeyConfig =
         serde_yml::from_str(&config_content).expect("Failed to parse config file");

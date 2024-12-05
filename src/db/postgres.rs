@@ -2,8 +2,8 @@ use sea_orm::{Database, DatabaseConnection, DbConn, DbErr};
 
 use crate::config;
 
-pub async fn connect_pg() -> Result<DbConn, DbErr> {
-    let config = config::load_config().unwrap();
+pub async fn connect_pg(config_path: &str) -> Result<DbConn, DbErr> {
+    let config = config::load_config(config_path).unwrap();
     let db_url = format!(
         "postgres://{}:{}@{}:{}/{}",
         config.db.user, config.db.pass, config.db.host, config.db.port, config.db.db
