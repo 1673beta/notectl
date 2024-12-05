@@ -1192,6 +1192,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "clap",
+ "nu-ansi-term",
  "rand",
  "redis",
  "sea-orm",
@@ -1199,6 +1200,16 @@ dependencies = [
  "serde_yml",
  "tokio",
  "vapid",
+]
+
+[[package]]
+name = "nu-ansi-term"
+version = "0.50.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d4a28e057d01f97e61255210fcff094d74ed0466038633e95017f5beb68e4399"
+dependencies = [
+ "serde",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

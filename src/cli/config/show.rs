@@ -1,5 +1,5 @@
-use crate::config::{MisskeyConfig, load_config};
-use clap::{Subcommand, Parser};
+use crate::config::{load_config, MisskeyConfig};
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(name = "config")]

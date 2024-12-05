@@ -1,6 +1,6 @@
-use clap::{Args, Parser, Subcommand};
-use crate::cli::vapid::generate;
 use crate::cli::config::show::ConfigCommand;
+use crate::cli::vapid::generate;
+use clap::{Args, Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -11,7 +11,7 @@ pub struct Cli {
 #[derive(Debug, Subcommand)]
 pub enum Commands {
     Webpush(generate::VapidCommand),
-    Config(ConfigCommand)
+    Config(ConfigCommand),
 }
 
 pub async fn exec() {
@@ -19,7 +19,7 @@ pub async fn exec() {
     match args.cmd {
         Commands::Webpush(cmd) => {
             cmd.exec().unwrap();
-        },
+        }
         Commands::Config(cmd) => {
             cmd.exec().unwrap();
         }

@@ -1,4 +1,4 @@
-use std::{fs, path::Path};
+use std::{fmt, fs, path::Path};
 
 use serde::{Deserialize, Serialize};
 
@@ -19,6 +19,13 @@ pub struct MisskeyConfig {
     pub id: IdMethod,
 }
 
+impl fmt::Display for MisskeyConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "MisskeyConfig {{ publish_tarball_instead_of_provide_repository_url: {:?}, url: {}, port: {}, db: {}, db_replications: {}, db_slaves: {:?}, redis: {}, redis_for_pubsub: {:?}, redis_for_job_queue: {:?}, redis_for_timelines: {:?}, meilisearch: {:?}, id: {} }}",
+            self.publish_tarball_instead_of_provide_repository_url, self.url, self.port, self.db, self.db_replications, self.db_slaves, self.redis, self.redis_for_pubsub, self.redis_for_job_queue, self.redis_for_timelines, self.meilisearch, self.id)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DbConfig {
     pub host: String,
@@ -27,7 +34,14 @@ pub struct DbConfig {
     pub user: String,
     pub pass: String,
     pub disable_cache: Option<bool>,
-    pub extra: Option<DbExtraConfig>
+    pub extra: Option<DbExtraConfig>,
+}
+
+impl fmt::Display for DbConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "DbConfig {{ host: {}, port: {}, db: {}, user: {}, pass: {}, disable_cache: {:?}, extra: {:?} }}",
+            self.host, self.port, self.db, self.user, self.pass, self.disable_cache, self.extra)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -45,6 +59,13 @@ pub struct RedisConfig {
     pub db: Option<u64>,
 }
 
+impl fmt::Display for RedisConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "RedisConfig {{ host: {}, port: {}, family: {:?}, pass: {:?}, prefix: {:?}, db: {:?} }}",
+            self.host, self.port, self.family, self.pass, self.prefix, self.db)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub enum RedisFamily {
     Both = 0,
@@ -60,6 +81,13 @@ pub struct MeilisearchConfig {
     pub ssl: bool,
     pub index: String,
     pub scope: Option<MeilisearchScope>,
+}
+
+impl fmt::Display for MeilisearchConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(f, "MeilisearchConfig {{ host: {}, port: {}, api_key: {}, ssl: {}, index: {}, scope: {:?} }}",
+            self.host, self.port, self.api_key, self.ssl, self.index, self.scope)
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -86,9 +114,22 @@ impl Default for IdMethod {
     }
 }
 
-pub fn load_config() -> Result<MisskeyConfig, Box<dyn std::error::Error>>{
+impl fmt::Display for IdMethod {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Aid => writeln!(f, "aid"),
+            Self::Aidx => writeln!(f, "aidx"),
+            Self::Meid => writeln!(f, "meid"),
+            Self::Ulid => writeln!(f, "ulid"),
+            Self::ObjectId => writeln!(f, "object_id"),
+        }
+    }
+}
+
+pub fn load_config() -> Result<MisskeyConfig, Box<dyn std::error::Error>> {
     let config_path = Path::new(".config/default.yml");
     let config_content = fs::read_to_string(config_path).expect("Failed to read config file");
-    let config: MisskeyConfig = serde_yml::from_str(&config_content).expect("Failed to parse config file");
+    let config: MisskeyConfig =
+        serde_yml::from_str(&config_content).expect("Failed to parse config file");
     Ok(config)
 }

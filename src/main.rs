@@ -1,5 +1,5 @@
-mod config;
 mod cli;
+mod config;
 mod db;
 mod entities;
 mod util;

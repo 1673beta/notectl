@@ -1,5 +1,5 @@
-use std::time::{SystemTime, UNIX_EPOCH, Duration};
 use std::num::ParseIntError;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use chrono::{DateTime, Local};
 
