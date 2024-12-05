@@ -1,6 +1,6 @@
 use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::generate;
-use clap::{Args, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 pub struct Cli {

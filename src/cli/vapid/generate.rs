@@ -1,5 +1,5 @@
 use crate::util::vapid;
-use clap::{Arg, Parser, Subcommand};
+use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(name = "webpush")]
