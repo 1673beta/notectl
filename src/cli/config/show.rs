@@ -1,4 +1,4 @@
-use crate::config::{load_config, MisskeyConfig};
+use crate::config::{load_config, print_config, MisskeyConfig};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -18,7 +18,7 @@ impl ConfigCommand {
         match &self.subcmd {
             ConfigSubCommand::Show => {
                 let config: MisskeyConfig = load_config()?;
-                println!("{:?}", config);
+                let _ = print_config(&config);
             }
         }
         Ok(())
