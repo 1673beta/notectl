@@ -59,6 +59,15 @@ pub struct MeilisearchConfig {
     pub api_key: String,
     pub ssl: bool,
     pub index: String,
+    pub scope: Option<MeilisearchScope>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum MeilisearchScope {
+    Local,
+    Global,
+    Custom(Vec<String>),
 }
 
 #[derive(Debug, Serialize, Deserialize)]
