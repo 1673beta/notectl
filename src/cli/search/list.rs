@@ -1,5 +1,5 @@
 use inkjet::{formatter, theme::{vendored, Theme}, Highlighter, Language};
-use meilisearch_sdk::{client::*, indexes::IndexesResults};
+use meilisearch_sdk::client::*;
 use termcolor::{ColorChoice, StandardStream};
 
 use crate::config::load_config;
