@@ -112,6 +112,7 @@ meilisearch:
   apiKey: 'FN6sKuqo5nF8OTAj4kE3NDTZ'
   ssl: false
   index: 'localtest'
+  scope: 'global'
 
 #   ┌───────────────┐
 #───┘ ID generation └───────────────────────────────────────────
