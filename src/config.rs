@@ -54,7 +54,8 @@ pub enum RedisFamily {
     IPv6 = 6,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct MeilisearchConfig {
     pub host: String,
     pub port: u64,
@@ -64,7 +65,7 @@ pub struct MeilisearchConfig {
     pub scope: Option<MeilisearchScope>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "lowercase")]
 pub enum MeilisearchScope {
     Local,

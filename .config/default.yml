@@ -106,12 +106,12 @@ redis:
 #   ┌───────────────────────────┐
 #───┘ MeiliSearch configuration └─────────────────────────────
 
-#meilisearch:
-#  host: meilisearch
-#  port: 7700
-#  apiKey: ''
-#  ssl: true
-#  index: ''
+meilisearch:
+  host: localhost
+  port: 7700
+  apiKey: 'FN6sKuqo5nF8OTAj4kE3NDTZ'
+  ssl: false
+  index: 'localtest'
 
 #   ┌───────────────┐
 #───┘ ID generation └───────────────────────────────────────────
