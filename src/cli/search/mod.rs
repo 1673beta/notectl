@@ -23,10 +23,10 @@ pub enum SearchSubCommand {
 }
 
 impl SearchCommand {
-    pub fn exec(&self) ->Result<(), Box<dyn std::error::Error>> {
+    pub async fn exec(&self) ->Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
             SearchSubCommand::List { config_path } => {
-                let _ = list(config_path);
+                let _ = list(config_path).await?;
             }
         }
         Ok(())

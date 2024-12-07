@@ -27,7 +27,7 @@ pub async fn exec() {
             cmd.exec().unwrap();
         }
         Commands::Search(cmd) => {
-            cmd.exec().unwrap();
+            cmd.exec().await.unwrap();
         }
     }
 }
