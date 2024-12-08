@@ -5,6 +5,7 @@ use clap::{Parser, Subcommand};
 use crate::cli::search::SearchCommand;
 
 #[derive(Debug, Parser)]
+#[command(name = "notectl", about = "A CLI tool for managing misskey")]
 pub struct Cli {
     #[clap(subcommand)]
     pub cmd: Commands,
@@ -12,8 +13,11 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
+    #[command(about = "About webpush notification")]
     Webpush(generate::VapidCommand),
+    #[command(about = "About your misskey configuration")]
     Config(ConfigCommand),
+    #[command(about = "About Meilisearch")]
     Search(SearchCommand),
 }
 
