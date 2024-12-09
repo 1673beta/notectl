@@ -1,0 +1,24 @@
+name: Feature Request
+description: Suggest an idea for this project
+labels: ["feature"]
+
+body:
+  - type: textarea
+    attributes:
+      label: Summary
+      description: Tell us what the suggestion is
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Purpose
+      description: Describe the specific problem or need you think this feature will solve, and who it will help.
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: Create a Pull Request
+      options:
+        - label: Yes, I will patch the bug myself and send a pull request

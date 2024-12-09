@@ -1,0 +1,57 @@
+name: Report a Bug
+description: Create a report to help us improve
+labels: ["bug?"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug.
+        In order to avoid duplicate issues, please search to see if the problemm you found has already been reported.
+
+  - type: textarea
+    attributes:
+      label: Summary
+      description: Tell us what the bug is about
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Tell us what should happen
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: Tell us what happens instead
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: Tell us how to reproduce this bug
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional Information
+      description: Tell us anything else you think we should know
+      value: |
+        * Software Name: 
+        * Software Version:
+        * Operating System:
+        * Machine's CPU Architecture:
+      render: markdown
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: Create a Pull Request
+      options:
+        - label: Yes, I will patch the bug myself and send a pull request
