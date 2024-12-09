@@ -13,8 +13,10 @@ pub async fn health(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
     let host_url = format!("{}://{}:{}", if ssl { "https" } else { "http" }, host, port);
     let client = Client::new(host_url, Some(api_key)).unwrap();
     let is_healthy = client.is_healthy().await;
+    let health = client.health().await.unwrap().status.to_string();
 
     println!("Is Meilisearch Healthy?: {}", is_healthy);
+    println!("Health Status: {}", health);
 
     Ok(())
 }
