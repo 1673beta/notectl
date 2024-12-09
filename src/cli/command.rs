@@ -24,20 +24,29 @@ pub enum Commands {
     Remote(RemoteCommand),
 }
 
-pub async fn exec() {
+pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
     let args = Cli::parse();
     match args.cmd {
         Commands::Webpush(cmd) => {
-            cmd.exec().unwrap();
+            if let Err(e) = cmd.exec() {
+                eprintln!("{}", e);
+            }
         }
         Commands::Config(cmd) => {
-            cmd.exec().unwrap();
+            if let Err(e) = cmd.exec() {
+                eprintln!("{}", e);
+            }
         }
         Commands::Search(cmd) => {
-            cmd.exec().await.unwrap();
+            if let Err(e) = cmd.exec().await {
+                eprintln!("{}", e);
+            }
         }
         Commands::Remote(cmd) => {
-            cmd.exec().await.unwrap();
+            if let Err(e) = cmd.exec().await {
+                eprintln!("{}", e);
+            }
         }
     }
+    Ok(())
 }

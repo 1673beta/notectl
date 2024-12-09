@@ -4,11 +4,11 @@ mod db;
 mod entities;
 mod util;
 
-use anyhow::Ok;
-
 #[tokio::main]
-async fn main() {
-    let _ = cli::command::exec().await;
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    if let Err(e) = cli::command::exec().await {
+        eprintln!("{}", e);
+    }
 
-    Ok(()).expect("Failed to execute the program");
+    Ok(())
 }
