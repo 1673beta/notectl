@@ -44,13 +44,13 @@ impl RemoteCommand {
     pub async fn exec(&self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
             RemoteSubCommand::Gone { config_path, url } => {
-                let _ = gone(config_path, url).await?;
+                gone(config_path, url).await?;
             }
             RemoteSubCommand::Suspend { config_path, url } => {
-                let _ = suspend(config_path, url).await?;
+                suspend(config_path, url).await?;
             }
             RemoteSubCommand::Unsuspend { config_path, url } => {
-                let _ = unsuspend(config_path, url).await?;
+                unsuspend(config_path, url).await?;
             }
         }
         Ok(())

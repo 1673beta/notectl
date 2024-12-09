@@ -20,7 +20,7 @@ impl ConfigCommand {
     pub fn exec(&self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
             ConfigSubCommand::Show { config_path} => {
-                let config: MisskeyConfig = load_config(&config_path)?;
+                let config: MisskeyConfig = load_config(config_path)?;
                 let _ = print_config(&config);
             }
         }

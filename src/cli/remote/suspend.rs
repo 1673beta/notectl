@@ -7,7 +7,7 @@ pub async fn suspend(config_path: &str, url: &str) -> Result<(), Box<dyn std::er
     let pg_client = connect_pg(config_path).await.unwrap();
 
     let host = Instance::find().filter(instance::Column::Host.eq(url)).one(&pg_client).await.unwrap();
-    if let None = host {
+    if host.is_none() {
         println!("Host not found");
         return Err("Host not found".into());
     }

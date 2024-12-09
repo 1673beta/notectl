@@ -73,20 +73,15 @@ pub enum MeilisearchScope {
     Custom(Vec<String>),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum IdMethod {
     Aid,
+    #[default]
     Aidx,
     Meid,
     Ulid,
     ObjectId,
-}
-
-impl Default for IdMethod {
-    fn default() -> Self {
-        IdMethod::Aidx
-    }
 }
 
 pub fn load_config(config_path: &str) -> Result<MisskeyConfig, Box<dyn std::error::Error>> {

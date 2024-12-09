@@ -77,6 +77,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
     let setting = Settings::new().with_searchable_attributes(vec!["text", "cw"]).with_sortable_attributes(vec!["createdAt"]).with_filterable_attributes(vec!["createdAt", "userId", "userHost", "channelId", "tags"]).with_typo_tolerance(typotolerance).with_pagination(pagination);
 
     let meili_index = client.index(uid.clone());
+    // TODO: ここをtokio::spawnで並列処理にする
     let task_set = meili_index.set_settings(&setting).await.unwrap();
     let queue_set = client.wait_for_task(task_set, None, None).await.unwrap();
     let task_doc = meili_index.add_documents(&indexes, Some("id")).await.unwrap();

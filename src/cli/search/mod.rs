@@ -9,6 +9,7 @@ use clap::{Parser, Subcommand};
 use health::health;
 use list::list;
 use deploy::deploy;
+use drop::drop;
 
 #[derive(Debug, Parser)]
 #[command(name = "search")]
@@ -41,16 +42,16 @@ impl SearchCommand {
     pub async fn exec(&self) ->Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
             SearchSubCommand::List { config_path } => {
-                let _ = list(config_path).await?;
+                list(config_path).await?;
             },
             SearchSubCommand::Health { config_path } => {
-                let _ = health(config_path).await?;
+                health(config_path).await?;
             },
             SearchSubCommand::Drop { config_path } => {
-                let _ = drop::drop(config_path).await?;
+                drop(config_path).await?;
             },
             SearchSubCommand::Deploy { config_path } => {
-                let _ = deploy(config_path).await?;
+                deploy(config_path).await?;
             }
         }
         Ok(())
