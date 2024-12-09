@@ -1,8 +1,12 @@
 use std::{fs, path::Path};
 
-use inkjet::{formatter, theme::{vendored, Theme}, Highlighter, Language};
-use termcolor::{ColorChoice, StandardStream};
+use inkjet::{
+    formatter,
+    theme::{vendored, Theme},
+    Highlighter, Language,
+};
 use serde::{Deserialize, Serialize};
+use termcolor::{ColorChoice, StandardStream};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -135,7 +139,7 @@ pub struct SentryOptions {
 pub enum OutgoingAddressFamily {
     IPv4,
     IPv6,
-    Dual
+    Dual,
 }
 
 pub fn load_config(config_path: &str) -> Result<MisskeyConfig, Box<dyn std::error::Error>> {

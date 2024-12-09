@@ -2,9 +2,9 @@ use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::generate;
 use clap::{Parser, Subcommand};
 
-use crate::cli::search::SearchCommand;
-use crate::cli::remote::RemoteCommand;
 use crate::cli::id::IdCommand;
+use crate::cli::remote::RemoteCommand;
+use crate::cli::search::SearchCommand;
 
 #[derive(Debug, Parser)]
 #[command(name = "notectl", about = "A CLI tool for managing misskey")]

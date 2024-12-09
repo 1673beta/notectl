@@ -1,15 +1,15 @@
 pub mod deploy;
 pub mod drop;
 pub mod get;
-pub mod list;
 pub mod health;
+pub mod list;
 pub mod redeploy;
 
 use clap::{Parser, Subcommand};
-use health::health;
-use list::list;
 use deploy::deploy;
 use drop::drop;
+use health::health;
+use list::list;
 
 #[derive(Debug, Parser)]
 #[command(name = "search")]
@@ -39,17 +39,17 @@ pub enum SearchSubCommand {
 }
 
 impl SearchCommand {
-    pub async fn exec(&self) ->Result<(), Box<dyn std::error::Error>> {
+    pub async fn exec(&self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
             SearchSubCommand::List { config_path } => {
                 list(config_path).await?;
-            },
+            }
             SearchSubCommand::Health { config_path } => {
                 health(config_path).await?;
-            },
+            }
             SearchSubCommand::Drop { config_path } => {
                 drop(config_path).await?;
-            },
+            }
             SearchSubCommand::Deploy { config_path } => {
                 deploy(config_path).await?;
             }

@@ -1,4 +1,8 @@
-use inkjet::{formatter, theme::{vendored, Theme}, Highlighter, Language};
+use inkjet::{
+    formatter,
+    theme::{vendored, Theme},
+    Highlighter, Language,
+};
 use meilisearch_sdk::client::*;
 use termcolor::{ColorChoice, StandardStream};
 
@@ -12,7 +16,7 @@ pub async fn list(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let ssl = meili_config.ssl;
     let api_key = meili_config.api_key;
 
-    let host_url: String = format!("{}://{}:{}", if ssl { "https"} else { "http"}, host, port);
+    let host_url: String = format!("{}://{}:{}", if ssl { "https" } else { "http" }, host, port);
     let client: Client = Client::new(host_url, Some(api_key)).unwrap();
     let index = client.list_all_indexes_raw().await.unwrap();
     let json = serde_json::to_string_pretty(&index).unwrap();
@@ -20,7 +24,7 @@ pub async fn list(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let theme = Theme::from_helix(vendored::TERM16_DARK).unwrap();
     let stream = StandardStream::stdout(ColorChoice::AlwaysAnsi);
     let formatter = formatter::Terminal::new(theme, stream);
-    let colored = highlighter.highlight_to_string(Language::Json, &formatter,json)?;
+    let colored = highlighter.highlight_to_string(Language::Json, &formatter, json)?;
     println!("{}", colored);
     Ok(())
 }

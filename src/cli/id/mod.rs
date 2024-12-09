@@ -17,7 +17,7 @@ pub enum IdSubCommand {
         id_type: String,
         #[arg(short = 'i', long = "id")]
         id: String,
-    }
+    },
 }
 
 impl IdCommand {

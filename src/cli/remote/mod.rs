@@ -37,7 +37,7 @@ pub enum RemoteSubCommand {
         config_path: String,
         #[arg(short = 'u', long = "url")]
         url: String,
-    }
+    },
 }
 
 impl RemoteCommand {

@@ -1,5 +1,5 @@
-use std::{time::{Duration, SystemTime, UNIX_EPOCH}};
-use ulid::{Ulid, DecodeError};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use ulid::{DecodeError, Ulid};
 
 use chrono::{DateTime, Local};
 

@@ -1,6 +1,6 @@
 use crate::util::vapid;
 use clap::{Parser, Subcommand};
-use nu_ansi_term::Color::Red; 
+use nu_ansi_term::Color::Red;
 
 #[derive(Debug, Parser)]
 #[command(name = "webpush")]
