@@ -44,6 +44,9 @@ pub struct MisskeyConfig {
     pub allowed_private_networks: Option<Vec<String>>,
     pub max_file_size: Option<u64>,
     pub pid_file: Option<String>,
+    pub per_channel_max_note_cache_count: Option<u64>,
+    pub per_user_notifications_max_count: Option<u64>,
+    pub deactivate_antenna_threshold: Option<u64>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
