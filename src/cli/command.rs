@@ -3,6 +3,7 @@ use crate::cli::vapid::generate;
 use clap::{Parser, Subcommand};
 
 use crate::cli::search::SearchCommand;
+use crate::cli::remote::RemoteCommand;
 
 #[derive(Debug, Parser)]
 #[command(name = "notectl", about = "A CLI tool for managing misskey")]
@@ -19,6 +20,8 @@ pub enum Commands {
     Config(ConfigCommand),
     #[command(about = "About Meilisearch")]
     Search(SearchCommand),
+    #[command(about = "About remote server")]
+    Remote(RemoteCommand),
 }
 
 pub async fn exec() {
@@ -31,6 +34,9 @@ pub async fn exec() {
             cmd.exec().unwrap();
         }
         Commands::Search(cmd) => {
+            cmd.exec().await.unwrap();
+        }
+        Commands::Remote(cmd) => {
             cmd.exec().await.unwrap();
         }
     }
