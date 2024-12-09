@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub struct MisskeyConfig {
     pub publish_tarball_instead_of_provide_repository_url: Option<bool>,
+    pub setup_password: Option<String>,
     pub url: String,
     pub port: u64,
     pub db: DbConfig,
@@ -19,6 +20,30 @@ pub struct MisskeyConfig {
     pub redis_for_timelines: Option<RedisConfig>,
     pub meilisearch: Option<MeilisearchConfig>,
     pub id: IdMethod,
+    pub serde_for_backend: Option<SentryForBackendConfig>,
+    pub serde_for_frontend: Option<SentryForFrontendConfig>,
+    pub disable_hsts: Option<bool>,
+    pub cluster_limit: Option<u64>,
+    pub deliver_job_concurrency: Option<u64>,
+    pub inbox_job_concurrency: Option<u64>,
+    pub relationship_job_concurrency: Option<u64>,
+    pub deliver_job_per_sec: Option<u64>,
+    pub inbox_job_per_sec: Option<u64>,
+    pub relationship_job_per_sec: Option<u64>,
+    pub deliver_job_max_attempts: Option<u64>,
+    pub inbox_job_max_attempts: Option<u64>,
+    pub outgoing_address: Option<String>,
+    pub outgoing_address_family: Option<OutgoingAddressFamily>,
+    pub proxy: Option<String>,
+    pub proxy_bypass_hosts: Option<Vec<String>>,
+    pub proxy_smtp: Option<String>,
+    pub media_proxy: Option<String>,
+    pub proxy_remote_files: bool,
+    pub video_thumbnail_generator: Option<String>,
+    pub sign_to_activity_pub_get: bool,
+    pub allowed_private_networks: Option<Vec<String>>,
+    pub max_file_size: Option<u64>,
+    pub pid_file: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -82,6 +107,32 @@ pub enum IdMethod {
     Meid,
     Ulid,
     ObjectId,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SentryForBackendConfig {
+    pub enable_node_profiling: bool,
+    pub options: Option<SentryOptions>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SentryForFrontendConfig {
+    pub options: Option<SentryOptions>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SentryOptions {
+    pub dsn: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum OutgoingAddressFamily {
+    IPv4,
+    IPv6,
+    Dual
 }
 
 pub fn load_config(config_path: &str) -> Result<MisskeyConfig, Box<dyn std::error::Error>> {
