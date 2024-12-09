@@ -4,10 +4,12 @@ use meilisearch_sdk::settings::{PaginationSetting, Settings, TypoToleranceSettin
 use meilisearch_sdk::client::*;
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Serialize, Deserialize};
-use crate::config::MeilisearchScope;
+use crate::config::{IdMethod, MeilisearchScope};
 use crate::entities::prelude::*;
 
-use crate::util::id::aidx::parse;
+use crate::util::id::aid;
+use crate::util::id::aidx;
+use crate::util::id::ulid;
 use crate::{config::load_config, db::postgres::connect_pg, entities::note};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -48,16 +50,50 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
         },
     };
 
-    let indexes: Vec<Notes> = notes.iter().map(|note| Notes {
-        id: note.id.clone(),
-        created_at: parse(&note.id).unwrap(),
-        user_id: note.user_id.clone(),
-        user_host: note.user_host.clone(),
-        channel_id: note.channel_id.clone(),
-        cw: note.cw.clone(),
-        text: note.text.clone(),
-        tags: note.tags.clone(),
-    }).collect();
+    let indexes: Vec<Notes> = match config.id {
+        IdMethod::Aid => {
+            notes.iter().map(|note| Notes {
+                id: note.id.clone(),
+                created_at: aid::parse(&note.id).unwrap(),
+                user_id: note.user_id.clone(),
+                user_host: note.user_host.clone(),
+                channel_id: note.channel_id.clone(),
+                cw: note.cw.clone(),
+                text: note.text.clone(),
+                tags: note.tags.clone(),
+            }).collect()
+        },
+        IdMethod::Aidx => {
+            notes.iter().map(|note| Notes {
+                id: note.id.clone(),
+                created_at: aidx::parse(&note.id).unwrap(),
+                user_id: note.user_id.clone(),
+                user_host: note.user_host.clone(),
+                channel_id: note.channel_id.clone(),
+                cw: note.cw.clone(),
+                text: note.text.clone(),
+                tags: note.tags.clone(),
+            }).collect()
+        },
+        IdMethod::Ulid => {
+            notes.iter().map(|note| Notes {
+                id: note.id.clone(),
+                created_at: ulid::parse(&note.id).unwrap(),
+                user_id: note.user_id.clone(),
+                user_host: note.user_host.clone(),
+                channel_id: note.channel_id.clone(),
+                cw: note.cw.clone(),
+                text: note.text.clone(),
+                tags: note.tags.clone(),
+            }).collect()
+        },
+        IdMethod::Meid => {
+            return Err("Meid is not supported yet".into());
+        },
+        IdMethod::ObjectId => {
+            return Err("ObjectId is not supported yet".into());
+        },
+    };
 
     let host_url = format!("{}://{}:{}", if ssl { "https" } else { "http" }, host, port);
     let uid = format!("{}---notes", index);
