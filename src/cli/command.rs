@@ -4,6 +4,7 @@ use clap::{Parser, Subcommand};
 
 use crate::cli::search::SearchCommand;
 use crate::cli::remote::RemoteCommand;
+use crate::cli::id::IdCommand;
 
 #[derive(Debug, Parser)]
 #[command(name = "notectl", about = "A CLI tool for managing misskey")]
@@ -22,6 +23,8 @@ pub enum Commands {
     Search(SearchCommand),
     #[command(about = "About remote server")]
     Remote(RemoteCommand),
+    #[command(about = "About id")]
+    Id(IdCommand),
 }
 
 pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
@@ -46,6 +49,9 @@ pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
             if let Err(e) = cmd.exec().await {
                 eprintln!("{}", e);
             }
+        }
+        Commands::Id(cmd) => {
+            cmd.exec();
         }
     }
     Ok(())
