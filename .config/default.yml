@@ -34,7 +34,7 @@ port: 3000
 #───┘ PostgreSQL configuration └────────────────────────────────
 
 db:
-  host: localhost
+  host: db
   port: 5432
 
   # Database name
@@ -42,7 +42,7 @@ db:
 
   # Auth
   user: postgres
-  pass: Augustus
+  pass: postgres
 
   # Whether disable Caching queries
   #disableCache: true
@@ -72,7 +72,7 @@ dbReplications: false
 #───┘ Redis configuration └─────────────────────────────────────
 
 redis:
-  host: localhost
+  host: redis
   port: 6379
   #family: 0  # 0=Both, 4=IPv4, 6=IPv6
   #pass: example-pass
@@ -107,7 +107,7 @@ redis:
 #───┘ MeiliSearch configuration └─────────────────────────────
 
 meilisearch:
-  host: localhost
+  host: meilisearch
   port: 7700
   apiKey: 'FN6sKuqo5nF8OTAj4kE3NDTZ'
   ssl: false

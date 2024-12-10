@@ -1,0 +1,13 @@
+services:
+  notectl:
+    build: .
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - .config/:/.config/
+
+networks:
+  internal_network:
+    internal: true
+  external_network:
