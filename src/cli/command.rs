@@ -3,6 +3,7 @@ use crate::cli::vapid::generate;
 use clap::{Parser, Subcommand};
 
 use crate::cli::id::IdCommand;
+use crate::cli::note::NoteCommand;
 use crate::cli::remote::RemoteCommand;
 use crate::cli::search::SearchCommand;
 
@@ -25,6 +26,8 @@ pub enum Commands {
     Remote(RemoteCommand),
     #[command(about = "About id")]
     Id(IdCommand),
+    #[command(about = "About note")]
+    Note(NoteCommand),
 }
 
 pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
@@ -52,6 +55,11 @@ pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
         }
         Commands::Id(cmd) => {
             cmd.exec();
+        }
+        Commands::Note(cmd) => {
+            if let Err(e) = cmd.exec().await {
+                eprintln!("{}", e);
+            }
         }
     }
     Ok(())

@@ -9,6 +9,11 @@ pub fn parse(id: &str) -> Result<SystemTime, DecodeError> {
     Ok(UNIX_EPOCH + Duration::from_millis(timestamp))
 }
 
+pub fn gen(time: SystemTime) -> String {
+    let ulid = Ulid::from_datetime(time);
+    ulid.to_string()
+}
+
 pub fn formatted_time(id: &str) -> String {
     let systime = parse(id).unwrap();
     let datetime: DateTime<Local> = systime.into();
