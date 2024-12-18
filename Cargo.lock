@@ -1454,6 +1454,7 @@ dependencies = [
  "chrono",
  "clap",
  "inkjet",
+ "log",
  "meilisearch-sdk",
  "nu-ansi-term",
  "rand",

@@ -3,4 +3,5 @@ pub mod config;
 pub mod id;
 pub mod remote;
 pub mod search;
+pub mod user;
 pub mod vapid;
