@@ -1,6 +1,5 @@
 // 閉鎖などで存在しなくなったリモートアカウントを削除する
 use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter, QuerySelect};
-use tokio::task;
 
 use crate::entities::sea_orm_active_enums::InstanceSuspensionstateEnum;
 use crate::entities::{instance, prelude::*, user};
