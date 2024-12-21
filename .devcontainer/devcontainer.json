@@ -1,0 +1,7 @@
+{
+  "name": "notectl development container",
+  "dockerComposeFile": "compose.yml",
+  "service": "notectl-dev",
+  "workspaceFolder": "/workspaces/notectl-dev",
+  "remoteUser": "root"
+}
