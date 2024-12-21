@@ -1,4 +1,4 @@
-use sea_orm::{Database, DatabaseConnection, DbConn, DbErr};
+use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbConn, DbErr};
 
 use crate::config;
 
@@ -9,11 +9,10 @@ pub async fn connect_pg(config_path: &str) -> Result<DbConn, DbErr> {
         config.db.user, config.db.pass, config.db.host, config.db.port, config.db.db
     );
 
-    let db: DatabaseConnection = Database::connect(&db_url).await?;
-    Ok(db)
-}
+    let mut opt = ConnectOptions::new(&db_url);
+    opt.sqlx_logging(true)
+        .sqlx_logging_level(log::LevelFilter::Info);
 
-pub async fn close_pg(db: DbConn) -> Result<(), DbErr> {
-    db.close().await?;
-    Ok(())
+    let db: DatabaseConnection = Database::connect(opt).await?;
+    Ok(db)
 }
