@@ -1,0 +1,10 @@
+services:
+  notectl-dev:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspaces/notectl-dev
+    working_dir: /workspaces/notectl-dev:cached
+    command: sleep infinity
+

@@ -6,6 +6,7 @@ use crate::cli::id::IdCommand;
 use crate::cli::note::NoteCommand;
 use crate::cli::remote::RemoteCommand;
 use crate::cli::search::SearchCommand;
+use crate::cli::user::UserCommand;
 
 #[derive(Debug, Parser)]
 #[command(name = "notectl", about = "A CLI tool for managing misskey")]
@@ -26,6 +27,8 @@ pub enum Commands {
     Remote(RemoteCommand),
     #[command(about = "About id")]
     Id(IdCommand),
+    #[command(about = "About user")]
+    User(UserCommand),
     #[command(about = "About note")]
     Note(NoteCommand),
 }
@@ -55,6 +58,11 @@ pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
         }
         Commands::Id(cmd) => {
             cmd.exec();
+        }
+        Commands::User(cmd) => {
+            if let Err(e) = cmd.exec().await {
+                eprintln!("{}", e);
+            }
         }
         Commands::Note(cmd) => {
             if let Err(e) = cmd.exec().await {
