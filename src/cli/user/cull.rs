@@ -1,5 +1,5 @@
 // 閉鎖などで存在しなくなったリモートアカウントを削除する
-use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter, QuerySelect};
+use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter, QuerySelect, TransactionTrait};
 
 use crate::entities::sea_orm_active_enums::InstanceSuspensionstateEnum;
 use crate::entities::{instance, prelude::*, user};
@@ -7,6 +7,7 @@ use crate::db::postgres::connect_pg;
 
 pub async fn cull(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let pg_client = connect_pg(config_path).await?;
+    let txn = pg_client.begin().await?;
     let gone_hosts = Instance::find()
         .select_only()
         .filter(instance::Column::SuspensionState.eq(InstanceSuspensionstateEnum::GoneSuspended))
@@ -23,8 +24,8 @@ pub async fn cull(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
         .await?;
 
     for account in accounts {
-        let db = pg_client.clone();
-        account.delete(&db).await?;
+        account.delete(&txn).await?;
     }
+    txn.commit().await?;
     Ok(())
 }

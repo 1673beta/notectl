@@ -1,12 +1,13 @@
 // アカウントをまとめて削除する
 
-use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter};
+use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter, TransactionTrait};
 
 use crate::db::postgres::connect_pg;
 use crate::entities::{prelude::*, user};
 
 pub async fn prune(config_path: &str, host: Option<&str>, zero_note: bool, no_follow: bool) -> Result<(), Box<dyn std::error::Error>> {
     let pg_client = connect_pg(config_path).await?;
+    let txn = pg_client.begin().await?;
     let mut query = User::find();
 
     if let Some(host) = host {
@@ -25,18 +26,9 @@ pub async fn prune(config_path: &str, host: Option<&str>, zero_note: bool, no_fo
 
     let users = query.all(&pg_client).await?;
 
-    let mut tasks = vec![];
-
     for user in users {
-        let db = pg_client.clone();
-        let task = tokio::task::spawn(async move {
-            user.delete(&db).await
-        });
-        tasks.push(task);
+        user.delete(&txn).await?;
     }
-    for task in tasks {
-        task.await??;
-    }
-
+    txn.commit().await?;
     Ok(())
 }
