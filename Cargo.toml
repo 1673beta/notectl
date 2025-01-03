@@ -8,11 +8,13 @@ anyhow = "1.0.94"
 chrono = { version = "0.4.38", features = ["serde"] }
 clap = { version = "4.5.22", features = ["derive", "env"]}
 inkjet = { version = "0.11.1", features = ["terminal", "language-json", "theme"] }
+lazy_static = "1.5.0"
 log = "0.4.22"
 meilisearch-sdk = "0.27.1"
 nu-ansi-term = { version = "0.50.1", features = ["serde"] }
 rand = { version = "0.8.5", features = ["serde"] }
 redis = { version = "0.27.6", features = ["tokio-rustls-comp", "cluster", "json", "r2d2"] }
+regex = "1.11.1"
 sea-orm = { version = "1.1.2", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros"] }
 serde = { version = "1.0.215", features = ["derive", "serde_derive"]}
 serde_json = "1.0.133"
