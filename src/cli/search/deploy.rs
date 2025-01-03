@@ -7,9 +7,9 @@ use meilisearch_sdk::settings::{PaginationSetting, Settings, TypoToleranceSettin
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 use serde::{Deserialize, Serialize};
 
-use crate::util::id::aid;
 use crate::util::id::aidx;
 use crate::util::id::ulid;
+use crate::util::id::{aid, meid, objectid};
 use crate::{config::load_config, db::postgres::connect_pg, entities::note};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -103,12 +103,32 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
                 tags: note.tags.clone(),
             })
             .collect(),
-        IdMethod::Meid => {
-            return Err("Meid is not supported yet".into());
-        }
-        IdMethod::ObjectId => {
-            return Err("ObjectId is not supported yet".into());
-        }
+        IdMethod::Meid => notes
+            .iter()
+            .map(|note| Notes {
+                id: note.id.clone(),
+                created_at: meid::parse_meid(&note.id).unwrap(),
+                user_id: note.user_id.clone(),
+                user_host: note.user_host.clone(),
+                channel_id: note.channel_id.clone(),
+                cw: note.cw.clone(),
+                text: note.text.clone(),
+                tags: note.tags.clone(),
+            })
+            .collect(),
+        IdMethod::ObjectId => notes
+            .iter()
+            .map(|note| Notes {
+                id: note.id.clone(),
+                created_at: objectid::parse_object_id(&note.id).unwrap(),
+                user_id: note.user_id.clone(),
+                user_host: note.user_host.clone(),
+                channel_id: note.channel_id.clone(),
+                cw: note.cw.clone(),
+                text: note.text.clone(),
+                tags: note.tags.clone(),
+            })
+            .collect(),
     };
 
     let host_url = format!("{}://{}:{}", if ssl { "https" } else { "http" }, host, port);
