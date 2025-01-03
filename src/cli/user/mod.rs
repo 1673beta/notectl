@@ -31,9 +31,9 @@ pub enum UserSubCommand {
         config_path: String,
         #[arg(short = 'H', long = "host")]
         host: Option<String>,
-        #[arg(short = 'n', long = "note", action = clap::ArgAction::SetTrue)]
+        #[arg(short = 'n', long = "no-note", action = clap::ArgAction::SetTrue)]
         note: bool,
-        #[arg(short = 'f', long = "follow", action = clap::ArgAction::SetTrue)]
+        #[arg(short = 'f', long = "no-follow", action = clap::ArgAction::SetTrue)]
         follow: bool,
     },
 }
@@ -48,7 +48,12 @@ impl UserCommand {
                 let refs = id.iter().map(|s| s.as_str()).collect();
                 delete(config_path, refs).await?;
             }
-            UserSubCommand::Prune { config_path, host, note, follow } => {
+            UserSubCommand::Prune {
+                config_path,
+                host,
+                note,
+                follow,
+            } => {
                 let refs = host.as_deref();
                 prune(config_path, refs, *note, *follow).await?;
             }
