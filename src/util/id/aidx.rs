@@ -3,9 +3,9 @@ use std::sync::atomic::{AtomicU32, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use chrono::{DateTime, Local};
+use lazy_static::lazy_static;
 use nanoid::nanoid;
 use regex::Regex;
-use lazy_static::lazy_static;
 
 use crate::util::radix::radix_encode;
 
@@ -17,7 +17,14 @@ const NOISE_LENGTH: usize = 4;
 static COUNTER: AtomicU32 = AtomicU32::new(0);
 lazy_static! {
     pub static ref AIDX_REGEX: Regex = Regex::new(r"^[0-9a-z]{16}$").unwrap();
-    pub static ref NODE_ID: String = nanoid!(NODE_LENGTH, &['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']);
+    pub static ref NODE_ID: String = nanoid!(
+        NODE_LENGTH,
+        &[
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+            'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
+            'y', 'z'
+        ]
+    );
 }
 
 fn get_time(time: u64) -> String {
@@ -28,7 +35,11 @@ fn get_time(time: u64) -> String {
 
 fn get_noise() -> String {
     let counter = COUNTER.fetch_add(1, Ordering::SeqCst);
-    format!("{:0>width$}", format!("{:x}", counter), width = NOISE_LENGTH)
+    format!(
+        "{:0>width$}",
+        format!("{:x}", counter),
+        width = NOISE_LENGTH
+    )
 }
 
 pub fn gen_aidx(time: u64) -> Result<String, &'static str> {

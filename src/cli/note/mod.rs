@@ -19,13 +19,17 @@ pub enum NoteSubCommand {
         host: Option<String>,
         #[arg(short = 'd', long = "days")]
         days: u64,
-    }
+    },
 }
 
 impl NoteCommand {
     pub async fn exec(&self) -> Result<(), Box<dyn std::error::Error>> {
         match &self.subcmd {
-            NoteSubCommand::Delete { config_path, host, days } => {
+            NoteSubCommand::Delete {
+                config_path,
+                host,
+                days,
+            } => {
                 delete(config_path, host.as_deref(), *days).await?;
             }
         }

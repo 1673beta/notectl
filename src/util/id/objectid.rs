@@ -31,7 +31,7 @@ pub fn gen_object_id(t: u64) -> String {
 
 pub fn parse_object_id(id: &str) -> Result<SystemTime, ParseIntError> {
     let timestamp = u64::from_str_radix(&id[0..8], 16).unwrap();
-    let time = SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp as u64 * 1000);
+    let time = SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp * 1000);
     Ok(time)
 }
 

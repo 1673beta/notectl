@@ -3,9 +3,9 @@ use std::sync::atomic::{AtomicU16, Ordering};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use chrono::{DateTime, Local};
+use lazy_static::lazy_static;
 use rand::Rng;
 use regex::Regex;
-use lazy_static::lazy_static;
 
 use crate::util::radix::radix_encode;
 
@@ -23,7 +23,7 @@ fn init_counter() -> u16 {
 }
 
 fn get_time(time: u64) -> String {
-    let timestamp = std::cmp::max(0 , time - TIME2000);
+    let timestamp = std::cmp::max(0, time - TIME2000);
     format!("{:0>8}", radix_encode(timestamp as i64, 36))
 }
 

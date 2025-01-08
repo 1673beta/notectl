@@ -1,3 +1,3 @@
 pub mod id;
-pub mod vapid;
 pub mod radix;
+pub mod vapid;

@@ -5,7 +5,7 @@ use meilisearch_sdk::settings::{PaginationSetting, Settings, TypoToleranceSettin
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 
 use crate::util::id::{aid, aidx, meid, objectid, ulid};
-use crate::{config::load_config, db::postgres::connect_pg, entities::note, consts::MeiliNotes};
+use crate::{config::load_config, consts::MeiliNotes, db::postgres::connect_pg, entities::note};
 
 pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let config = load_config(config_path).unwrap();
@@ -48,7 +48,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
     let indexes: Vec<MeiliNotes> = match config.id {
         IdMethod::Aid => notes
             .iter()
-            .map(|note| MeiliNotes{
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: aid::parse(&note.id).unwrap(),
                 user_id: note.user_id.clone(),
@@ -61,7 +61,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
             .collect(),
         IdMethod::Aidx => notes
             .iter()
-            .map(|note| MeiliNotes{
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: aidx::parse(&note.id).unwrap(),
                 user_id: note.user_id.clone(),
@@ -87,7 +87,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
             .collect(),
         IdMethod::Meid => notes
             .iter()
-            .map(|note| MeiliNotes{
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: meid::parse_meid(&note.id).unwrap(),
                 user_id: note.user_id.clone(),

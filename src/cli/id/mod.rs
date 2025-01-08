@@ -1,9 +1,9 @@
-pub mod parse;
 pub mod gen;
+pub mod parse;
 
 use clap::{Parser, Subcommand, ValueEnum};
-use parse::parse;
 use gen::gen;
+use parse::parse;
 
 #[derive(Debug, Parser)]
 #[command(name = "id")]
@@ -32,7 +32,7 @@ pub enum IdSubCommand {
     Gen {
         #[arg(short = 'f', long = "format")]
         id_type: IdType,
-    }
+    },
 }
 
 impl IdCommand {

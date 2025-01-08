@@ -4,7 +4,10 @@ use super::IdType;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub fn gen(format: IdType) -> String {
-    let time = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
+    let time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as u64;
     match format {
         IdType::Aid => {
             let id = util::id::aid::gen_aid(time).unwrap();
