@@ -11,7 +11,9 @@ pub async fn connect_pg(config_path: &str) -> Result<DbConn, DbErr> {
 
     let mut opt = ConnectOptions::new(&db_url);
     opt.sqlx_logging(true)
-        .sqlx_logging_level(log::LevelFilter::Info);
+        .sqlx_logging_level(log::LevelFilter::Info)
+        .min_connections(2)
+        .max_connections(100);
 
     let db: DatabaseConnection = Database::connect(opt).await?;
     Ok(db)
