@@ -21,7 +21,8 @@ lazy_static! {
 }
 
 fn get_time(time: u64) -> String {
-    let timestamp = std::cmp::max(0, time - TIME2000);
+    let time = time as i64 - TIME2000 as i64;
+    let timestamp = std::cmp::max(0, time);
     format!("{:0>8}", radix_encode(timestamp as i64, 36))
 }
 
@@ -31,9 +32,6 @@ fn get_noise() -> String {
 }
 
 pub fn gen_aidx(time: u64) -> Result<String, &'static str> {
-    if time < TIME2000 {
-        return Err("Invalid timestamp");
-    }
     Ok(format!("{}{}{}", get_time(time), &*NODE_ID, get_noise()))
 }
 

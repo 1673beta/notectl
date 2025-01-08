@@ -15,8 +15,10 @@ pub fn formatted_time(id: &str) -> String {
     datetime.to_rfc3339()
 }
 
-pub fn gen_ulid() -> String {
+pub fn gen_ulid(time: u64) -> String {
     let mut gen = Generator::new();
-    let ulid = gen.generate_from_datetime(SystemTime::now()).unwrap().to_string();
+    // ここのSystemTime::now()を引数のi64から取得するようにする
+    let now = SystemTime::UNIX_EPOCH + Duration::from_millis(time);
+    let ulid = gen.generate_from_datetime(now).unwrap().to_string();
     format!("{}", ulid)
 }   

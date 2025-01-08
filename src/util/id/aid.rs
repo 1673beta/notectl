@@ -9,7 +9,7 @@ use lazy_static::lazy_static;
 
 use crate::util::radix::radix_encode;
 
-const TIME2000: i64 = 946684800000;
+const TIME2000: u64 = 946684800000;
 static COUNTER: AtomicU16 = AtomicU16::new(0);
 
 lazy_static! {
@@ -22,9 +22,9 @@ fn init_counter() -> u16 {
     rng.gen::<u16>()
 }
 
-fn get_time(time: i64) -> String {
+fn get_time(time: u64) -> String {
     let timestamp = std::cmp::max(0 , time - TIME2000);
-    format!("{:0>8}", radix_encode(timestamp, 36))
+    format!("{:0>8}", radix_encode(timestamp as i64, 36))
 }
 
 fn get_noise() -> String {
@@ -32,17 +32,14 @@ fn get_noise() -> String {
     format!("{:0>2}", radix_encode(counter_val as i64, 36))
 }
 
-pub fn gen_aid(time: i64) -> Result<String, &'static str> {
-    if time < 0 {
-        return Err("Invalid timestamp");
-    }
+pub fn gen_aid(time: u64) -> Result<String, &'static str> {
     Ok(format!("{}{}", get_time(time), get_noise()))
 }
 
 pub fn parse(id: &str) -> Result<SystemTime, ParseIntError> {
     let time_part = &id[0..8];
-    let time = i64::from_str_radix(time_part, 36)? + TIME2000;
-    Ok(UNIX_EPOCH + Duration::from_millis(time as u64))
+    let time = u64::from_str_radix(time_part, 36)? + TIME2000;
+    Ok(UNIX_EPOCH + Duration::from_millis(time))
 }
 
 pub fn formatted_time(id: &str) -> String {

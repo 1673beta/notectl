@@ -10,10 +10,7 @@ lazy_static! {
     static ref MEID_REGEX: Regex = Regex::new(r"^[0-9a-f](24)$").unwrap();
 }
 
-fn get_time(mut time: i64) -> String {
-    if time < 0 {
-        time = 0;
-    }
+fn get_time(mut time: u64) -> String {
     if time == 0 {
         return CHARS[0..1].to_string();
     }
@@ -33,12 +30,13 @@ fn get_random() -> String {
         .collect()
 }
 
-pub fn gen_meid(time: i64) -> String {
+// TODO: Resultにする
+pub fn gen_meid(time: u64) -> String {
     format!("{}{}", get_time(time), get_random())
 }
 
 pub fn parse_meid(id: &str) -> Result<SystemTime, ParseIntError> {
-    let timestamp = i64::from_str_radix(&id[0..12], 16).unwrap() - 0x800000000000;
+    let timestamp = u64::from_str_radix(&id[0..12], 16).unwrap() - 0x800000000000;
     let time = SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp as u64);
     Ok(time)
 }
