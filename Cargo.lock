@@ -1462,6 +1462,7 @@ dependencies = [
  "anyhow",
  "chrono",
  "clap",
+ "futures",
  "inkjet",
  "lazy_static",
  "log",

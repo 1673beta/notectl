@@ -7,6 +7,7 @@ edition = "2021"
 anyhow = "1.0.94"
 chrono = { version = "0.4.38", features = ["serde"] }
 clap = { version = "4.5.22", features = ["derive", "env"]}
+futures = "0.3.31"
 inkjet = { version = "0.11.1", features = ["terminal", "language-json", "theme"] }
 lazy_static = "1.5.0"
 log = "0.4.22"
