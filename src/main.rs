@@ -1,5 +1,6 @@
 mod cli;
 mod config;
+mod consts;
 mod db;
 mod entities;
 mod util;
