@@ -9,7 +9,7 @@
 ```bash
 git clone https://github.com/1673beta/notectl.git
 cd notectl
-cargo install --path src/
+cargo install --path .
 ```
 
 ## docker環境での使用
@@ -29,7 +29,7 @@ docker compose build
 
 ### イメージをpullする場合
 ```bash
-docker pull ここにURL
+docker pull ghcr.io/1673beta/1673beta/notectl:latest
 ```
 
 #### compose.ymlの編集

@@ -56,4 +56,16 @@ notectl remote unsuspend --config <CONFIG_PATH> --url <INSTANCE_URL>
 ```bash
 notectl id parse --format <ID_TYPE> --id <ID>
 ```
-指定された形式のidから日時を取得します。aid、aidx、ulidのみ対応しています。
+指定された形式のidから日時を取得します。
+```bash
+notectl id gen --format <ID_TYPE>
+```
+指定された形式で、現在日時からIDを生成します。
+
+## Note CLI
+```bash
+notectl note delete --config <CONFIG_PATH> --days <DAYS> [--host: <HOST>]
+```
+指定した日数以前のノートを削除します。  
+日数には1〜18446744073709551615までが指定できます。  
+`--host`フラグを使用することで、特定のホストの指定した日数以前のノートを消すことも可能です。このフラグを使用しない場合、デフォルトではリモートの全ての投稿が対象となります。    
