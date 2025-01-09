@@ -1,29 +1,11 @@
-use std::time::SystemTime;
-
 use crate::config::{IdMethod, MeilisearchScope};
 use crate::entities::prelude::*;
 use meilisearch_sdk::client::*;
 use meilisearch_sdk::settings::{PaginationSetting, Settings, TypoToleranceSettings};
 use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
-use serde::{Deserialize, Serialize};
 
-use crate::util::id::aidx;
-use crate::util::id::ulid;
-use crate::util::id::{aid, meid, objectid};
-use crate::{config::load_config, db::postgres::connect_pg, entities::note};
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Notes {
-    pub id: String,
-    pub created_at: SystemTime,
-    pub user_id: String,
-    pub user_host: Option<String>,
-    pub channel_id: Option<String>,
-    pub cw: Option<String>,
-    pub text: Option<String>,
-    pub tags: Vec<String>,
-}
+use crate::util::id::{aid, aidx, meid, objectid, ulid};
+use crate::{config::load_config, consts::MeiliNotes, db::postgres::connect_pg, entities::note};
 
 pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let config = load_config(config_path).unwrap();
@@ -63,10 +45,10 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
         }
     };
 
-    let indexes: Vec<Notes> = match config.id {
+    let indexes: Vec<MeiliNotes> = match config.id {
         IdMethod::Aid => notes
             .iter()
-            .map(|note| Notes {
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: aid::parse(&note.id).unwrap(),
                 user_id: note.user_id.clone(),
@@ -79,7 +61,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
             .collect(),
         IdMethod::Aidx => notes
             .iter()
-            .map(|note| Notes {
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: aidx::parse(&note.id).unwrap(),
                 user_id: note.user_id.clone(),
@@ -92,7 +74,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
             .collect(),
         IdMethod::Ulid => notes
             .iter()
-            .map(|note| Notes {
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: ulid::parse(&note.id).unwrap(),
                 user_id: note.user_id.clone(),
@@ -105,7 +87,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
             .collect(),
         IdMethod::Meid => notes
             .iter()
-            .map(|note| Notes {
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: meid::parse_meid(&note.id).unwrap(),
                 user_id: note.user_id.clone(),
@@ -118,7 +100,7 @@ pub async fn deploy(config_path: &str) -> Result<(), Box<dyn std::error::Error>>
             .collect(),
         IdMethod::ObjectId => notes
             .iter()
-            .map(|note| Notes {
+            .map(|note| MeiliNotes {
                 id: note.id.clone(),
                 created_at: objectid::parse_object_id(&note.id).unwrap(),
                 user_id: note.user_id.clone(),

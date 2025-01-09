@@ -3,6 +3,7 @@ use redis::{Client, RedisResult};
 
 use crate::config;
 
+#[allow(dead_code)]
 pub async fn connect(confing_path: &str) -> RedisResult<MultiplexedConnection> {
     let config = config::load_config(confing_path).unwrap();
     let redis_url = format!("redis://{}:{}/", config.redis.host, config.redis.port,);

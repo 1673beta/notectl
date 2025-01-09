@@ -1,6 +1,8 @@
+pub mod gen;
 pub mod parse;
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
+use gen::gen;
 use parse::parse;
 
 #[derive(Debug, Parser)]
@@ -8,6 +10,15 @@ use parse::parse;
 pub struct IdCommand {
     #[command(subcommand)]
     pub subcmd: IdSubCommand,
+}
+
+#[derive(Debug, Clone, ValueEnum, Copy)]
+pub enum IdType {
+    Aid,
+    Aidx,
+    Meid,
+    ObjectId,
+    Ulid,
 }
 
 #[derive(Debug, Subcommand)]
@@ -18,6 +29,10 @@ pub enum IdSubCommand {
         #[arg(short = 'i', long = "id")]
         id: String,
     },
+    Gen {
+        #[arg(short = 'f', long = "format")]
+        id_type: IdType,
+    },
 }
 
 impl IdCommand {
@@ -25,6 +40,9 @@ impl IdCommand {
         match &self.subcmd {
             IdSubCommand::Parse { id_type, id } => {
                 println!("{}", parse(id, id_type))
+            }
+            IdSubCommand::Gen { id_type } => {
+                println!("{}", gen(*id_type))
             }
         }
     }
