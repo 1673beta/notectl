@@ -7,4 +7,70 @@ services:
       - ..:/workspaces/notectl-dev
     working_dir: /workspaces/notectl-dev:cached
     command: sleep infinity
+    networks:
+      - internal_network
+      - external_network
 
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - misskey
+    networks:
+      - internal_network
+      - external_network
+
+  misskey:
+    image: misskey/misskey:latest
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports: ["3000:3000"]  # enable this if you want to access directly
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./misskey/.config/default.yml:/misskey/.config/default.yml:ro
+      - ./misskey/files:/misskey/files
+    environment:
+      - VIRTUAL_HOST=~^.*$$  # marker for lb
+      - VIRTUAL_PORT=3000  # target port for lb
+
+  redis:
+    restart: always
+    image: redis:7-alpine
+    networks:
+      - internal_network
+    volumes:
+      - ./redis1:/data
+    healthcheck:
+      test: "redis-cli ping"
+      interval: 5s
+      retries: 20
+
+  db:
+    restart: always
+    image: postgres:15-alpine
+    networks:
+      - internal_network
+    env_file:
+      - docker.env
+    volumes:
+      - ./pg1:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
+      interval: 5s
+      retries: 20
+
+networks:
+  internal_network:
+    internal: true
+  external_network:
