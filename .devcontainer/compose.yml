@@ -20,12 +20,12 @@ services:
       - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/certs:/etc/nginx/certs
     depends_on:
-      - web
+      - misskey
     networks:
       - internal_network
       - external_network
 
-  web:
+  misskey:
     image: misskey/misskey:latest
     restart: always
     depends_on:
