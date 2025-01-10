@@ -5,3 +5,4 @@
 .devcontainer/pg2
 .devcontainer/redis1
 .devcontainer/redis2
+.devcontainer/nginx/certs
