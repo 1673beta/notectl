@@ -38,8 +38,8 @@ services:
       - internal_network
       - external_network
     volumes:
-      - ./misskey1/.config/default.yml:/misskey/.config/default.yml:ro
-      - ./misskey1/files:/misskey/files
+      - ./misskey/.config/default.yml:/misskey/.config/default.yml:ro
+      - ./misskey/files:/misskey/files
     environment:
       - VIRTUAL_HOST=~^.*$$  # marker for lb
       - VIRTUAL_PORT=3000  # target port for lb
