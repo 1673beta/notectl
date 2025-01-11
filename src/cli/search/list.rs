@@ -1,10 +1,8 @@
-use inkjet::{
-    formatter,
-    theme::{vendored, Theme},
-    Highlighter, Language,
-};
+use syntect::easy::HighlightLines;
+use syntect::highlighting::{ThemeSet, Style};
+use syntect::parsing::SyntaxSet;
+use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
 use meilisearch_sdk::client::*;
-use termcolor::{ColorChoice, StandardStream};
 
 use crate::config::load_config;
 
@@ -20,11 +18,16 @@ pub async fn list(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = Client::new(host_url, Some(api_key)).unwrap();
     let index = client.list_all_indexes_raw().await.unwrap();
     let json = serde_json::to_string_pretty(&index).unwrap();
-    let mut highlighter = Highlighter::new();
-    let theme = Theme::from_helix(vendored::TERM16_DARK).unwrap();
-    let stream = StandardStream::stdout(ColorChoice::AlwaysAnsi);
-    let formatter = formatter::Terminal::new(theme, stream);
-    let colored = highlighter.highlight_to_string(Language::Json, &formatter, json)?;
-    println!("{}", colored);
+    
+    let ps = SyntaxSet::load_defaults_newlines();
+    let ts = ThemeSet::load_defaults();
+
+    let syntax = ps.find_syntax_by_extension("json").unwrap();
+    let mut h = HighlightLines::new(syntax, &ts.themes["base16-ocean.dark"]);
+    for line in LinesWithEndings::from(&json) {
+        let ranges: Vec<(Style, &str)> = h.highlight_line(line, &ps).unwrap();
+        let escaped = as_24_bit_terminal_escaped(&ranges[..], true);
+        print!("{}", escaped);
+    }
     Ok(())
 }
