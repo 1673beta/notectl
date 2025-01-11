@@ -1,6 +1,6 @@
 use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::generate;
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ColorChoice};
 
 use crate::cli::id::IdCommand;
 use crate::cli::note::NoteCommand;
@@ -9,7 +9,7 @@ use crate::cli::search::SearchCommand;
 use crate::cli::user::UserCommand;
 
 #[derive(Debug, Parser)]
-#[command(name = "notectl", about = "A CLI tool for managing misskey")]
+#[command(name = "notectl", about = "A CLI tool for managing misskey", color = ColorChoice::Always, styles = super::style::style())]
 pub struct Cli {
     #[clap(subcommand)]
     pub cmd: Commands,

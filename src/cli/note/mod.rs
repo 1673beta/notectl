@@ -12,6 +12,7 @@ pub struct NoteCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum NoteSubCommand {
+    #[command(about = "Delete notes from remote server. Needs to specify days before to delete.")]
     Delete {
         #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
         config_path: String,
