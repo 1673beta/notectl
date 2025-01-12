@@ -36,7 +36,7 @@ docker pull ghcr.io/1673beta/1673beta/notectl:latest
 **Misskey側の**compose.ymlを開いて、下記項目を追加します。
 ```yml
   notectl:
-    image: notectl-notectl:latest
+    image: ghcr.io/1673beta/1673beta/notectl:latest
     networks:
       - internal_network
       - external_network
