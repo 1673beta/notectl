@@ -3,5 +3,17 @@
   "dockerComposeFile": "compose.yml",
   "service": "notectl-dev",
   "workspaceFolder": "/workspaces/notectl-dev",
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "vadimcn.vscode-lldb",
+        "oderwat.indent-rainbow",
+        "dustypomerleau.rust-syntax",
+        "github.vscode-github-actions"
+      ]
+    }
+  }
 }

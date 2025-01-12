@@ -1,14 +1,15 @@
 use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::generate;
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ColorChoice};
 
 use crate::cli::id::IdCommand;
+use crate::cli::note::NoteCommand;
 use crate::cli::remote::RemoteCommand;
 use crate::cli::search::SearchCommand;
 use crate::cli::user::UserCommand;
 
 #[derive(Debug, Parser)]
-#[command(name = "notectl", about = "A CLI tool for managing misskey")]
+#[command(name = "notectl", about = "A CLI tool for managing misskey", color = ColorChoice::Always, styles = super::style::style())]
 pub struct Cli {
     #[clap(subcommand)]
     pub cmd: Commands,
@@ -28,6 +29,8 @@ pub enum Commands {
     Id(IdCommand),
     #[command(about = "About user")]
     User(UserCommand),
+    #[command(about = "About note")]
+    Note(NoteCommand),
 }
 
 pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
@@ -57,6 +60,11 @@ pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
             cmd.exec();
         }
         Commands::User(cmd) => {
+            if let Err(e) = cmd.exec().await {
+                eprintln!("{}", e);
+            }
+        }
+        Commands::Note(cmd) => {
             if let Err(e) = cmd.exec().await {
                 eprintln!("{}", e);
             }

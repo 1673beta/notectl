@@ -1,12 +1,10 @@
 use std::{fs, path::Path};
 
-use inkjet::{
-    formatter,
-    theme::{vendored, Theme},
-    Highlighter, Language,
-};
+use syntect::easy::HighlightLines;
+use syntect::highlighting::{ThemeSet, Style};
+use syntect::parsing::SyntaxSet;
+use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
 use serde::{Deserialize, Serialize};
-use termcolor::{ColorChoice, StandardStream};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -152,11 +150,15 @@ pub fn load_config(config_path: &str) -> Result<MisskeyConfig, Box<dyn std::erro
 
 pub fn print_config(config: &MisskeyConfig) -> Result<(), Box<dyn std::error::Error>> {
     let json = serde_json::to_string_pretty(config)?;
-    let mut highlighter = Highlighter::new();
-    let theme = Theme::from_helix(vendored::BASE16_TERMINAL).unwrap();
-    let stream = StandardStream::stdout(ColorChoice::AlwaysAnsi);
-    let formatter = formatter::Terminal::new(theme, stream);
-    let colored = highlighter.highlight_to_string(Language::Json, &formatter, json)?;
-    println!("{}", colored);
+    let ps = SyntaxSet::load_defaults_newlines();
+    let ts = ThemeSet::load_defaults();
+
+    let syntax = ps.find_syntax_by_extension("json").unwrap();
+    let mut h = HighlightLines::new(syntax, &ts.themes["Solarized (dark)"]);
+    for line in LinesWithEndings::from(&json) {
+        let ranges: Vec<(Style, &str)> = h.highlight_line(line, &ps).unwrap();
+        let escaped = as_24_bit_terminal_escaped(&ranges[..], true);
+        println!("{}", escaped);
+    }
     Ok(())
 }

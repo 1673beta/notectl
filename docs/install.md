@@ -9,7 +9,7 @@
 ```bash
 git clone https://github.com/1673beta/notectl.git
 cd notectl
-cargo install --path src/
+cargo install --path .
 ```
 
 ## docker環境での使用
@@ -29,14 +29,14 @@ docker compose build
 
 ### イメージをpullする場合
 ```bash
-docker pull ここにURL
+docker pull ghcr.io/1673beta/1673beta/notectl:latest
 ```
 
 #### compose.ymlの編集
 **Misskey側の**compose.ymlを開いて、下記項目を追加します。
 ```yml
   notectl:
-    image: notectl-notectl:latest
+    image: ghcr.io/1673beta/1673beta/notectl:latest
     networks:
       - internal_network
       - external_network
