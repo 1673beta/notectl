@@ -1,10 +1,10 @@
 use std::{fs, path::Path};
 
+use serde::{Deserialize, Serialize};
 use syntect::easy::HighlightLines;
-use syntect::highlighting::{ThemeSet, Style};
+use syntect::highlighting::{Style, ThemeSet};
 use syntect::parsing::SyntaxSet;
 use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

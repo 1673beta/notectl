@@ -1,8 +1,8 @@
+use meilisearch_sdk::client::*;
 use syntect::easy::HighlightLines;
-use syntect::highlighting::{ThemeSet, Style};
+use syntect::highlighting::{Style, ThemeSet};
 use syntect::parsing::SyntaxSet;
 use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
-use meilisearch_sdk::client::*;
 
 use crate::config::load_config;
 
@@ -18,7 +18,7 @@ pub async fn list(config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = Client::new(host_url, Some(api_key)).unwrap();
     let index = client.list_all_indexes_raw().await.unwrap();
     let json = serde_json::to_string_pretty(&index).unwrap();
-    
+
     let ps = SyntaxSet::load_defaults_newlines();
     let ts = ThemeSet::load_defaults();
 

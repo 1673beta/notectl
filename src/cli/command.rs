@@ -1,6 +1,6 @@
 use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::generate;
-use clap::{Parser, Subcommand, ColorChoice};
+use clap::{ColorChoice, Parser, Subcommand};
 
 use crate::cli::id::IdCommand;
 use crate::cli::note::NoteCommand;
