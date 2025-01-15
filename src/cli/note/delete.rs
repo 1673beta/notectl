@@ -108,7 +108,7 @@ pub async fn delete(
         tracing::error!("Cannot specify today or future date");
         std::process::exit(3);
     }
-    // ここに問題がある
+
     match config.id {
         IdMethod::Aid => {
             let id = gen_aid(date).unwrap();
