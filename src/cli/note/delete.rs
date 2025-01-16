@@ -76,8 +76,10 @@ pub async fn delete(
                 .await
                 .unwrap()
         } else {
+            let user_host = format!("userHost IS NULL");
+            let query = format!("{} AND {}", base_filter, user_host);
             DocumentDeletionQuery::new(&index)
-                .with_filter(&base_filter)
+                .with_filter(&query)
                 .execute::<MeiliNotes>()
                 .await
                 .unwrap()
