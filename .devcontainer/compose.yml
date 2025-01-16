@@ -78,7 +78,7 @@ services:
     environment:
       - MEILI_NO_ANALYTICS=true
       - MEILI_ENV=production
-      - MEILI_MASTER_KEY=FN6sKuqo5nF8OTAj4kE3NDTZ
+      - MEILI_MASTER_KEY=
     networks:
       - internal_network
       - external_network

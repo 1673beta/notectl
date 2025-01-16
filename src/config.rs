@@ -1,5 +1,4 @@
 use std::{fs, path::Path};
-
 use serde::{Deserialize, Serialize};
 use syntect::easy::HighlightLines;
 use syntect::highlighting::{Style, ThemeSet};

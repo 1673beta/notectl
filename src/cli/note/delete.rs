@@ -63,6 +63,7 @@ pub async fn delete(
             tracing::error!("Cannot specify today or future date");
             std::process::exit(3);
         }
+
         let created_at = format!("createdAt < {}", date);
         let base_filter = created_at.clone();
 
