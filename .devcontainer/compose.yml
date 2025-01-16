@@ -70,6 +70,21 @@ services:
       interval: 5s
       retries: 20
 
+  meilisearch:
+    restart: unless-stopped
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
+    environment:
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_ENV=production
+      - MEILI_MASTER_KEY=
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./meilisearch:/meili_data
+
 networks:
   internal_network:
     internal: true

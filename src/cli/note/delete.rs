@@ -33,7 +33,7 @@ pub async fn delete(
     // do if meilisearch is enabled
     if let Some(meili_config) = config.meilisearch {
         // get meilisearch config
-        let host = meili_config.host;
+        let meili_host = meili_config.host;
         let port = meili_config.port;
         let ssl = meili_config.ssl;
         let api_key = meili_config.api_key;
@@ -44,7 +44,12 @@ pub async fn delete(
         let uid = format!("{}---notes", m_index);
 
         // parse meilisearch url for meilisearch_sdk
-        let url = format!("{}://{}:{}", if ssl { "https" } else { "http" }, host, port);
+        let url = format!(
+            "{}://{}:{}",
+            if ssl { "https" } else { "http" },
+            meili_host,
+            port
+        );
         // create meilisearch client
         let client = meilisearch_sdk::client::Client::new(url, Some(api_key)).unwrap();
         // createdAtをfilterの条件としてmeilisearchから削除する
@@ -58,11 +63,28 @@ pub async fn delete(
             tracing::error!("Cannot specify today or future date");
             std::process::exit(3);
         }
-        let task = DocumentDeletionQuery::new(&index)
-            .with_filter(format!("createdAt < {}", date).as_str())
-            .execute::<MeiliNotes>()
-            .await
-            .unwrap();
+
+        let created_at = format!("createdAt < {}", date);
+        let base_filter = created_at.clone();
+
+        let task = if let Some(host) = host {
+            let user_host = format!("userHost = \"{}\"", host);
+            let query = format!("{} AND {}", base_filter, user_host);
+            DocumentDeletionQuery::new(&index)
+                .with_filter(&query)
+                .execute::<MeiliNotes>()
+                .await
+                .unwrap()
+        } else {
+            let user_host = format!("userHost IS NULL");
+            let query = format!("{} AND {}", base_filter, user_host);
+            DocumentDeletionQuery::new(&index)
+                .with_filter(&query)
+                .execute::<MeiliNotes>()
+                .await
+                .unwrap()
+        };
+
         task.wait_for_completion(&client, None, None).await.unwrap();
         tracing::info!("Meilisearch delete task completed");
     } else {
@@ -89,7 +111,7 @@ pub async fn delete(
         tracing::error!("Cannot specify today or future date");
         std::process::exit(3);
     }
-    // ここに問題がある
+
     match config.id {
         IdMethod::Aid => {
             let id = gen_aid(date).unwrap();
