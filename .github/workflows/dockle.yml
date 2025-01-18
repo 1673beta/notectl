@@ -41,6 +41,7 @@ jobs:
               with:
                 context: .
                 push: false
+                load: true
                 platforms: ${{ matrix.platform }}
                 tags: local/notectl:${{ github.sha }}-${{ matrix.arch}}
             
