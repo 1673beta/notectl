@@ -1,0 +1,51 @@
+name: Dockle
+
+on:
+    push:
+        branches:
+            - develop
+    pull_request:
+
+jobs:
+    dockle:
+        runs-on: ${{ matrix.runner }}
+        strategy:
+            matrix:
+                include:
+                    - runner: ubuntu-latest
+                      platform: linux/amd64
+                      arch: amd64
+                    - runner: ubuntu-24.04-arm
+                      platform: linux/arm64
+                      arch: arm64
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+            
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v2
+              with:
+                  platforms: ${{ matrix.platform }}
+            
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Build Docker image
+              uses: docker/build-push-action@v4
+              with:
+                context: .
+                push: false
+                platforms: ${{ matrix.platform }}
+                tags: ${{ github.repository }}:${{ github.sha }}-${{ matrix.arch }}
+            
+            - name: Run Dockle
+              uses: goodwithtech/dockle-action@main
+              with:
+                image: ${{ github.repository }}:${{ github.sha }}-${{ matrix.arch }}
+                format: 'sarif'
+                exit-code: '1'
+                exit-level: 'error'
+            
+            - name: Clean up
+              if: always()
+              run: docker system prune -af
