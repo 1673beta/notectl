@@ -42,12 +42,12 @@ jobs:
                 context: .
                 push: false
                 platforms: ${{ matrix.platform }}
-                tags: ${{ github.repository }}:${{ github.sha }}-${{ matrix.arch }}
+                tags: local/notectl:${{ github.sha }}-${{ matrix.arch}}
             
             - name: Run Dockle
               uses: goodwithtech/dockle-action@main
               with:
-                image: ${{ github.repository }}:${{ github.sha }}-${{ matrix.arch }}
+                image: local/notectl:${{ github.sha }}-${{ matrix.arch }}
                 format: 'sarif'
                 exit-code: '1'
                 exit-level: 'error'
