@@ -29,6 +29,12 @@ jobs:
             
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
+            
+            - name: Start Docker
+              run: |
+                docker --version
+                sudo systemctl start docker
+                sudo systemctl status docker
 
             - name: Build Docker image
               uses: docker/build-push-action@v4
