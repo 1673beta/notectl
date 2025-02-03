@@ -37,10 +37,10 @@ jobs:
             run: |
               mkdir -p artifacts
               cd target/release
-              tar -czf ../../notectl-${{ matrix.platform }}.tar.gz notectl
+              tar -czf ../../notectl-linux-${{ matrix.arch }}.tar.gz notectl
 
           - name: Upload binary
             uses: actions/upload-artifact@v4
             with:
-              name: notectl-${{ matrix.platform }}.tar.gz
-              path: artifacts/notectl-${{ matrix.platform }}.tar.gz
+              name: notectl-${{ matrix.arch }}.tar.gz
+              path: artifacts/notectl-linux-${{ matrix.arch }}.tar.gz
