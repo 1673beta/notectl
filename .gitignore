@@ -7,3 +7,4 @@
 .devcontainer/redis2
 .devcontainer/nginx/certs
 .devcontainer/meilisearch
+.devcontainer/misskey/files
