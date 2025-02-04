@@ -6,15 +6,15 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "avatar_decoration")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    #[sea_orm(column_name = "updatedAt")]
-    pub updated_at: Option<DateTimeWithTimeZone>,
-    pub url: String,
-    pub name: String,
-    pub description: String,
-    #[sea_orm(column_name = "roleIdsThatCanBeUsedThisDecoration")]
-    pub role_ids_that_can_be_used_this_decoration: Vec<String>,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: String,
+  #[sea_orm(column_name = "updatedAt")]
+  pub updated_at: Option<DateTimeWithTimeZone>,
+  pub url: String,
+  pub name: String,
+  pub description: String,
+  #[sea_orm(column_name = "roleIdsThatCanBeUsedThisDecoration")]
+  pub role_ids_that_can_be_used_this_decoration: Vec<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

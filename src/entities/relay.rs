@@ -7,11 +7,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "relay")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    #[sea_orm(unique)]
-    pub inbox: String,
-    pub status: RelayStatusEnum,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: String,
+  #[sea_orm(unique)]
+  pub inbox: String,
+  pub status: RelayStatusEnum,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -6,33 +6,33 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "user_memo")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    #[sea_orm(column_name = "userId")]
-    pub user_id: String,
-    #[sea_orm(column_name = "targetUserId")]
-    pub target_user_id: String,
-    pub memo: String,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: String,
+  #[sea_orm(column_name = "userId")]
+  pub user_id: String,
+  #[sea_orm(column_name = "targetUserId")]
+  pub target_user_id: String,
+  pub memo: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    User2,
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::TargetUserId",
-        to = "super::user::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    User1,
+  #[sea_orm(
+    belongs_to = "super::user::Entity",
+    from = "Column::UserId",
+    to = "super::user::Column::Id",
+    on_update = "NoAction",
+    on_delete = "Cascade"
+  )]
+  User2,
+  #[sea_orm(
+    belongs_to = "super::user::Entity",
+    from = "Column::TargetUserId",
+    to = "super::user::Column::Id",
+    on_update = "NoAction",
+    on_delete = "Cascade"
+  )]
+  User1,
 }
 
 impl ActiveModelBehavior for ActiveModel {}
