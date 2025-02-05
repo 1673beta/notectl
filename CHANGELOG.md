@@ -1,3 +1,15 @@
+# 0.1.2
+
+## Release Date
+unreleased
+
+## Dev
+- editorconfigとrustfmtを改善
+
+## Fix
+- opensslを0.10.70に
+- meilisearchが有効な場合に`note delete`を実行する際に、誤ってローカルの投稿が削除される問題を修正
+
 # 0.1.1
 
 ## Release Date

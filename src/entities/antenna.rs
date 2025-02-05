@@ -7,66 +7,66 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "antenna")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    #[sea_orm(column_name = "userId")]
-    pub user_id: String,
-    pub name: String,
-    pub src: AntennaSrcEnum,
-    #[sea_orm(column_name = "userListId")]
-    pub user_list_id: Option<String>,
-    #[sea_orm(column_type = "JsonBinary")]
-    pub keywords: Json,
-    #[sea_orm(column_name = "withFile")]
-    pub with_file: bool,
-    pub expression: Option<String>,
-    #[sea_orm(column_name = "caseSensitive")]
-    pub case_sensitive: bool,
-    #[sea_orm(column_name = "withReplies")]
-    pub with_replies: bool,
-    pub users: Vec<String>,
-    #[sea_orm(column_name = "excludeKeywords", column_type = "JsonBinary")]
-    pub exclude_keywords: Json,
-    #[sea_orm(column_name = "lastUsedAt")]
-    pub last_used_at: DateTimeWithTimeZone,
-    #[sea_orm(column_name = "isActive")]
-    pub is_active: bool,
-    #[sea_orm(column_name = "localOnly")]
-    pub local_only: bool,
-    #[sea_orm(column_name = "excludeBots")]
-    pub exclude_bots: bool,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: String,
+  #[sea_orm(column_name = "userId")]
+  pub user_id: String,
+  pub name: String,
+  pub src: AntennaSrcEnum,
+  #[sea_orm(column_name = "userListId")]
+  pub user_list_id: Option<String>,
+  #[sea_orm(column_type = "JsonBinary")]
+  pub keywords: Json,
+  #[sea_orm(column_name = "withFile")]
+  pub with_file: bool,
+  pub expression: Option<String>,
+  #[sea_orm(column_name = "caseSensitive")]
+  pub case_sensitive: bool,
+  #[sea_orm(column_name = "withReplies")]
+  pub with_replies: bool,
+  pub users: Vec<String>,
+  #[sea_orm(column_name = "excludeKeywords", column_type = "JsonBinary")]
+  pub exclude_keywords: Json,
+  #[sea_orm(column_name = "lastUsedAt")]
+  pub last_used_at: DateTimeWithTimeZone,
+  #[sea_orm(column_name = "isActive")]
+  pub is_active: bool,
+  #[sea_orm(column_name = "localOnly")]
+  pub local_only: bool,
+  #[sea_orm(column_name = "excludeBots")]
+  pub exclude_bots: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    User,
-    #[sea_orm(
-        belongs_to = "super::user_list::Entity",
-        from = "Column::UserListId",
-        to = "super::user_list::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    UserList,
+  #[sea_orm(
+    belongs_to = "super::user::Entity",
+    from = "Column::UserId",
+    to = "super::user::Column::Id",
+    on_update = "NoAction",
+    on_delete = "Cascade"
+  )]
+  User,
+  #[sea_orm(
+    belongs_to = "super::user_list::Entity",
+    from = "Column::UserListId",
+    to = "super::user_list::Column::Id",
+    on_update = "NoAction",
+    on_delete = "Cascade"
+  )]
+  UserList,
 }
 
 impl Related<super::user::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::User.def()
-    }
+  fn to() -> RelationDef {
+    Relation::User.def()
+  }
 }
 
 impl Related<super::user_list::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserList.def()
-    }
+  fn to() -> RelationDef {
+    Relation::UserList.def()
+  }
 }
 
 impl ActiveModelBehavior for ActiveModel {}
