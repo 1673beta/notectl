@@ -29,7 +29,7 @@ lazy_static! {
 fn get_time(time: u64) -> String {
   let time = time as i64 - TIME2000 as i64;
   let timestamp = std::cmp::max(0, time);
-  format!("{:0>8}", radix_encode(timestamp as i64, 36))
+  format!("{:0>8}", radix_encode(timestamp, 36))
 }
 
 fn get_noise() -> String {

@@ -76,7 +76,7 @@ pub async fn delete(
         .await
         .unwrap()
     } else {
-      let user_host = format!("userHost IS NULL");
+      let user_host = "userHost IS NOT NULL".to_string();
       let query = format!("{} AND {}", base_filter, user_host);
       DocumentDeletionQuery::new(&index)
         .with_filter(&query)
