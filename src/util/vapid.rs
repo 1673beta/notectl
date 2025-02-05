@@ -12,13 +12,13 @@ impl Key {
   pub fn generate() -> VapidResult<Key> {
     let group = openssl::ec::EcGroup::from_curve_name(Key::name())?;
     let key = openssl::ec::EcKey::generate(&group)?;
-    Ok(Key { key: key })
+    Ok(Key { key })
   }
 
   pub fn to_private_raw(&self) -> String {
     let key = self.key.private_key();
     let config = base64::engine::general_purpose::URL_SAFE_NO_PAD;
-    config.encode(&key.to_vec())
+    config.encode(key.to_vec())
   }
 
   pub fn to_public_raw(&self) -> String {
