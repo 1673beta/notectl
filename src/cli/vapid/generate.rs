@@ -20,7 +20,7 @@ impl VapidCommand {
       VapidSubCommand::Generate => {
         let key = vapid::generate()?;
         let style = anstyle::Style::new().fg_color(Some(anstyle::AnsiColor::Red.into()));
-        println!("{style}{}{style:#}","Please copy the following keys and paste them into Service Worker Settings in control panel.");
+        println!("{style}Please copy the following keys and paste them into Service Worker Settings in control panel.{style:#}");
         println!("Private Key: {}", key.private_key);
         println!("Public Key: {}", key.public_key);
       }
