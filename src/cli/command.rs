@@ -1,5 +1,5 @@
 use crate::cli::config::show::ConfigCommand;
-use crate::cli::vapid::generate;
+use crate::cli::vapid::WebpushCommand;
 use clap::{ColorChoice, Parser, Subcommand};
 
 use crate::cli::id::IdCommand;
@@ -18,7 +18,7 @@ pub struct Cli {
 #[derive(Debug, Subcommand)]
 pub enum Commands {
   #[command(about = "About webpush notification")]
-  Webpush(generate::VapidCommand),
+  Webpush(WebpushCommand),
   #[command(about = "About your misskey configuration")]
   Config(ConfigCommand),
   #[command(about = "About Meilisearch")]
