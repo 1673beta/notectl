@@ -6,55 +6,55 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "user_list")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    #[sea_orm(column_name = "userId")]
-    pub user_id: String,
-    pub name: String,
-    #[sea_orm(column_name = "isPublic")]
-    pub is_public: bool,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: String,
+  #[sea_orm(column_name = "userId")]
+  pub user_id: String,
+  pub name: String,
+  #[sea_orm(column_name = "isPublic")]
+  pub is_public: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::antenna::Entity")]
-    Antenna,
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id",
-        on_update = "NoAction",
-        on_delete = "Cascade"
-    )]
-    User,
-    #[sea_orm(has_many = "super::user_list_favorite::Entity")]
-    UserListFavorite,
-    #[sea_orm(has_many = "super::user_list_membership::Entity")]
-    UserListMembership,
+  #[sea_orm(has_many = "super::antenna::Entity")]
+  Antenna,
+  #[sea_orm(
+    belongs_to = "super::user::Entity",
+    from = "Column::UserId",
+    to = "super::user::Column::Id",
+    on_update = "NoAction",
+    on_delete = "Cascade"
+  )]
+  User,
+  #[sea_orm(has_many = "super::user_list_favorite::Entity")]
+  UserListFavorite,
+  #[sea_orm(has_many = "super::user_list_membership::Entity")]
+  UserListMembership,
 }
 
 impl Related<super::antenna::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Antenna.def()
-    }
+  fn to() -> RelationDef {
+    Relation::Antenna.def()
+  }
 }
 
 impl Related<super::user::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::User.def()
-    }
+  fn to() -> RelationDef {
+    Relation::User.def()
+  }
 }
 
 impl Related<super::user_list_favorite::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserListFavorite.def()
-    }
+  fn to() -> RelationDef {
+    Relation::UserListFavorite.def()
+  }
 }
 
 impl Related<super::user_list_membership::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::UserListMembership.def()
-    }
+  fn to() -> RelationDef {
+    Relation::UserListMembership.def()
+  }
 }
 
 impl ActiveModelBehavior for ActiveModel {}

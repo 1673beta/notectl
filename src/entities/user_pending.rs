@@ -6,13 +6,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "user_pending")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: String,
-    #[sea_orm(unique)]
-    pub code: String,
-    pub username: String,
-    pub email: String,
-    pub password: String,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: String,
+  #[sea_orm(unique)]
+  pub code: String,
+  pub username: String,
+  pub email: String,
+  pub password: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -1,3 +1,14 @@
+# 0.1.2
+
+## Release Date
+unreleased
+
+## Dev
+- editorconfigとrustfmtを改善
+
+## Fix
+- opensslを0.10.70に
+
 # 0.1.1
 
 ## Release Date
