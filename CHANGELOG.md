@@ -1,7 +1,15 @@
+# 0.1.3
+
+## Release Date
+2025/02/06
+
+## Fix
+- バージョンの上げ忘れ
+
 # 0.1.2
 
 ## Release Date
-unreleased
+2025/02/05
 
 ## Dev
 - editorconfigとrustfmtを改善
