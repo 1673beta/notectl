@@ -1,3 +1,13 @@
+# Unreleased
+
+## Release Date
+unreleased
+
+## Feat
+- `user delete`で`username`を指定できるように
+
+## Fix
+
 # 0.1.3
 
 ## Release Date
