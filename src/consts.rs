@@ -24,13 +24,13 @@ impl std::str::FromStr for UserIdentifier {
   type Err = String;
 
   fn from_str(s: &str) -> Result<Self, Self::Err> {
-      let parts: Vec<&str> = s.split('@').collect();
-      match parts.len() {
-        2 => Ok(UserIdentifier {
-          username: parts[0].to_string(),
-          host: parts[1].to_string(),
-        }),
-        _ => Err("Invalid user identifier".to_string()),
-      }
+    let parts: Vec<&str> = s.split('@').collect();
+    match parts.len() {
+      2 => Ok(UserIdentifier {
+        username: parts[0].to_string(),
+        host: parts[1].to_string(),
+      }),
+      _ => Err("Invalid user identifier".to_string()),
+    }
   }
 }

@@ -2,11 +2,15 @@
 
 use sea_orm::{ColumnTrait, Condition, EntityTrait, ModelTrait, QueryFilter, TransactionTrait};
 
+use crate::consts::UserIdentifier;
 use crate::db::postgres::connect_pg;
 use crate::entities::{prelude::*, user};
-use crate::consts::UserIdentifier;
 
-pub async fn delete(config_path: &str, id: Option<Vec<&str>>, user: Option<Vec<UserIdentifier>>) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn delete(
+  config_path: &str,
+  id: Option<Vec<&str>>,
+  user: Option<Vec<UserIdentifier>>,
+) -> Result<(), Box<dyn std::error::Error>> {
   let pg_client = connect_pg(config_path).await?;
   let txn = pg_client.begin().await?;
   // need to output logs
@@ -26,7 +30,7 @@ pub async fn delete(config_path: &str, id: Option<Vec<&str>>, user: Option<Vec<U
       query = query.filter(
         Condition::all()
           .add(user::Column::Username.contains(user.username))
-          .add(user::Column::Host.contains(user.host))
+          .add(user::Column::Host.contains(user.host)),
       )
     }
   }
