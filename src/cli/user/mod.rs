@@ -2,7 +2,8 @@ pub mod cull;
 pub mod delete;
 pub mod prune;
 
-use clap::{Parser, Subcommand, ArgGroup};
+use crate::consts::UserIdentifier;
+use clap::{ArgGroup, Parser, Subcommand};
 use cull::cull;
 use delete::delete;
 use prune::prune;
@@ -30,10 +31,20 @@ pub enum UserSubCommand {
   Delete {
     #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
     config_path: String,
-    #[arg(short = 'i', long = "id", value_delimiter = ',', help = "Id of user you want to delete. You can specify multiple IDs with comma. e.g. -i a4ct2ps000,a3tghk0000")]
+    #[arg(
+      short = 'i',
+      long = "id",
+      value_delimiter = ',',
+      help = "Id of user you want to delete. You can specify multiple IDs with comma. e.g. -i a4ct2ps000,a3tghk0000"
+    )]
     id: Option<Vec<String>>,
-    #[arg(short = 'u', long = "username", value_delimiter = ',', help = "Username of user you want to delete. You can specify multiple usernames with comma. e.g. -u alice,bob")]
-    username: Option<Vec<String>>,
+    #[arg(
+      short = 'u',
+      long = "username",
+      value_delimiter = ',',
+      help = "Username of user you want to delete. You can specify multiple usernames with comma. e.g. -u alice,bob"
+    )]
+    user: Option<Vec<UserIdentifier>>,
   },
   Prune {
     #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
@@ -53,14 +64,15 @@ impl UserCommand {
       UserSubCommand::Cull { config_path } => {
         cull(config_path).await?;
       }
-      UserSubCommand::Delete { config_path, id, username } => {
-        let id_ref = id.as_ref().map(|v| {
-          v.iter().map(|s| s.as_str()).collect::<Vec<&str>>()
-        });
-        let username_ref = username.as_ref().map(|v| {
-          v.iter().map(|s| s.as_str()).collect::<Vec<&str>>()
-        });
-        delete(config_path, id_ref, username_ref).await?;
+      UserSubCommand::Delete {
+        config_path,
+        id,
+        user,
+      } => {
+        let id_ref = id
+          .as_ref()
+          .map(|v| v.iter().map(|s| s.as_str()).collect::<Vec<&str>>());
+        delete(config_path, id_ref, user.clone()).await?;
       }
       UserSubCommand::Prune {
         config_path,
