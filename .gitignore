@@ -8,3 +8,7 @@
 .devcontainer/nginx/certs
 .devcontainer/meilisearch
 .devcontainer/misskey/files
+/db
+/redis
+/meilisearch
+.config/default.yml
