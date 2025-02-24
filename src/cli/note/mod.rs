@@ -1,5 +1,6 @@
 pub mod delete;
 
+use crate::entities::sea_orm_active_enums::NoteVisibilityEnum;
 use clap::{Parser, Subcommand};
 use delete::delete;
 
@@ -20,6 +21,8 @@ pub enum NoteSubCommand {
     host: Option<String>,
     #[arg(short = 'd', long = "days")]
     days: u64,
+    #[arg(short = 'v', long = "visibility", value_delimiter = ',')]
+    visibility: Option<Vec<NoteVisibilityEnum>>,
   },
 }
 
@@ -30,8 +33,15 @@ impl NoteCommand {
         config_path,
         host,
         days,
+        visibility,
       } => {
-        delete(config_path, host.as_deref(), *days).await?;
+        delete(
+          config_path,
+          host.as_deref(),
+          *days,
+          visibility.clone(),
+        )
+        .await?;
       }
     }
     Ok(())
