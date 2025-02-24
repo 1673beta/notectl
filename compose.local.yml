@@ -1,0 +1,61 @@
+services:
+  misskey:
+    image: misskey/misskey:latest
+    ports:
+      - "3030:3030"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./.config/:/misskey/.config
+      - ./files:/misskey/files
+    
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    networks:
+      - internal_network
+      - external_network
+    environment:
+      POSTGRES_DB: misskey
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./redis:/data
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
+    networks:
+      - internal_network
+      - external_network
+    volumes:
+      - ./meilisearch:/data.ms
+    environment:
+      - MEILI_NO_ANALYTICS=true
+      - MEILI_MASTER_KEY=5acc97a208a444a84413f73e5bf40db153860082
+
+networks:
+  internal_network:
+    internal: true
+  external_network:
+
+volumes:
+  db:
+  redis:
+  meilisearch:
