@@ -12,3 +12,4 @@
 /redis
 /meilisearch
 .config/default.yml
+.config/development.yml
