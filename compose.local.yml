@@ -49,6 +49,7 @@ services:
     environment:
       - MEILI_NO_ANALYTICS=true
       - MEILI_MASTER_KEY=5acc97a208a444a84413f73e5bf40db153860082
+      - MEILI_ENV=development
 
 networks:
   internal_network:
