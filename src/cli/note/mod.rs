@@ -35,13 +35,7 @@ impl NoteCommand {
         days,
         visibility,
       } => {
-        delete(
-          config_path,
-          host.as_deref(),
-          *days,
-          visibility.clone(),
-        )
-        .await?;
+        delete(config_path, host.as_deref(), *days, visibility.clone()).await?;
       }
     }
     Ok(())
