@@ -6,6 +6,7 @@ unreleased
 ## Feat
 - `user delete`で`username`を指定できるように
 - `note delete`で`visibility`を指定できるように
+- `note delete`で反応がないノートのみを削除できるように
 
 ## Fix
 
