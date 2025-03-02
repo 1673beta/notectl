@@ -1,5 +1,6 @@
 pub mod delete;
 
+use crate::entities::sea_orm_active_enums::NoteVisibilityEnum;
 use clap::{Parser, Subcommand};
 use delete::delete;
 
@@ -20,6 +21,18 @@ pub enum NoteSubCommand {
     host: Option<String>,
     #[arg(short = 'd', long = "days")]
     days: u64,
+    #[arg(short = 'v', long = "visibility", value_delimiter = ',')]
+    visibility: Option<Vec<NoteVisibilityEnum>>,
+    #[arg(long = "no-interaction", conflicts_with_all = ["no_reaction", "no_reply", "no_renote", "no_clipped"], action = clap::ArgAction::SetTrue)]
+    no_interaction: bool,
+    #[arg(long = "no-reaction", action = clap::ArgAction::SetTrue, conflicts_with = "no_interaction")]
+    no_reaction: bool,
+    #[arg(long = "no-reply", action = clap::ArgAction::SetTrue, conflicts_with = "no_interaction")]
+    no_reply: bool,
+    #[arg(long = "no-renote", action = clap::ArgAction::SetTrue, conflicts_with = "no_interaction")]
+    no_renote: bool,
+    #[arg(long = "no-clipped", action = clap::ArgAction::SetTrue, conflicts_with = "no_interaction")]
+    no_clipped: bool,
   },
 }
 
@@ -30,8 +43,28 @@ impl NoteCommand {
         config_path,
         host,
         days,
+        visibility,
+        no_interaction,
+        no_reaction,
+        no_reply,
+        no_renote,
+        no_clipped,
       } => {
-        delete(config_path, host.as_deref(), *days).await?;
+        let no_reaction_input = *no_interaction || *no_reaction;
+        let no_reply_input = *no_interaction || *no_reply;
+        let no_renote_input = *no_interaction || *no_renote;
+        let no_clipped_input = *no_interaction || *no_clipped;
+        delete(
+          config_path,
+          host.as_deref(),
+          *days,
+          visibility.clone(),
+          no_reaction_input,
+          no_reply_input,
+          no_renote_input,
+          no_clipped_input,
+        )
+        .await?;
       }
     }
     Ok(())

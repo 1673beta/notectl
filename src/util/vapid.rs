@@ -99,10 +99,14 @@ mod tests {
   fn test_generate_vapid_key() {
     let key = generate().unwrap();
 
-    let private_key_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(&key.private_key).expect("Failed to decode private key");
+    let private_key_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD
+      .decode(&key.private_key)
+      .expect("Failed to decode private key");
     assert_eq!(private_key_bytes.len(), 32);
-    
-    let public_key_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD.decode(&key.public_key).expect("Failed to decode public key");
+
+    let public_key_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD
+      .decode(&key.public_key)
+      .expect("Failed to decode public key");
     assert_eq!(public_key_bytes.len(), 65);
     assert_eq!(public_key_bytes[0], 0x04);
   }

@@ -6,16 +6,37 @@ on:
 
 jobs:
     build:
-        runs-on: ${{ matrix.runner }}
+        runs-on: ubuntu-latest
         strategy:
             matrix:
                 include:
-                    - runner: ubuntu-latest
+                    - target: x86_64-unknown-linux-gnu
                       platform: linux/amd64
-                      arch: amd64
-                    - runner: ubuntu-24.04-arm
+                      arch: x86_64
+                    - target: x86_64-unknown-linux-musl
+                      platform: linux/amd64
+                      arch: x86_64
+                    - target: aarch64-unknown-linux-gnu
                       platform: linux/arm64
-                      arch: arm64
+                      arch: aarch64
+                    - target: aarch64-unknown-linux-musl
+                      platform: linux/arm64
+                      arch: aarch64
+                    - target: x86_64-unknown-freebsd
+                      platform: freebsd/amd64
+                      arch: x86_64
+                    - target: aarch64-apple-darwin
+                      platform: darwin/arm64
+                      arch: aarch64
+                    - target: x86_64-apple-darwin
+                      platform: darwin/amd64
+                      arch: x86_64
+                    - target: riscv64gc-unknown-linux-gnu
+                      platform: linux/riscv64
+                      arch: riscv64
+                    - target: riscv64gc-unknown-linux-musl
+                      platform: linux/riscv64
+                      arch: riscv64
         steps:
           - name: Checkout repository
             uses: actions/checkout@v4
@@ -28,19 +49,22 @@ jobs:
               rustup default stable
               rustup update
               rustup component add clippy
-              cargo install clippy-sarif sarif-fmt
+              rustup target add ${{ matrix.target }}
+              cargo install clippy-sarif sarif-fmt cross
 
           - name: Build binary
-            run: cargo build --release
+            run: cross build --release --target ${{ matrix.target }}
 
           - name: Package binary
             run: |
               mkdir -p artifacts
               cd target/release
-              tar -czf ../../artifacts/notectl-linux-${{ matrix.arch }}.tar.gz notectl
+              tar -czf ../../artifacts/notectl-${{ matrix.target }}-${{ github.event.release.tag_name }}-tar.gz notectl
 
           - name: Upload binary
-            uses: actions/upload-artifact@v4
+            uses: softprops/action-gh-release@v1
+            env:
+              GITHUB_TOKEN: ${{ secrets.GH_REPO_TOKEN }}
             with:
-              name: notectl-${{ matrix.arch }}.tar.gz
-              path: artifacts/notectl-linux-${{ matrix.arch }}.tar.gz
+              files: |
+                artifacts/notectl-${{ matrix.target }}-${{ github.event.release.tag_name }}-tar.gz

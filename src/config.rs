@@ -19,6 +19,8 @@ pub struct MisskeyConfig {
   pub redis_for_pubsub: Option<RedisConfig>,
   pub redis_for_job_queue: Option<RedisConfig>,
   pub redis_for_timelines: Option<RedisConfig>,
+  #[serde(rename = "fulltextSearch")]
+  pub full_text_search: Option<FullTextSearch>,
   pub meilisearch: Option<MeilisearchConfig>,
   pub id: IdMethod,
   pub serde_for_backend: Option<SentryForBackendConfig>,
@@ -81,6 +83,22 @@ pub enum RedisFamily {
   Both = 0,
   IPv4 = 4,
   IPv6 = 6,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct FullTextSearch {
+  pub provider: FullTextSearchProvider,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub enum FullTextSearchProvider {
+  #[serde(rename = "sqlLike")]
+  SqlLike,
+  #[serde(rename = "sqlPgroonga")]
+  SqlPgroonga,
+  #[serde(rename = "meilisearch")]
+  Meilisearch,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
