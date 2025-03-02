@@ -1,5 +1,6 @@
 use meilisearch_sdk::documents::DocumentDeletionQuery;
-use sea_orm::{ColumnTrait, EntityTrait, ModelTrait, QueryFilter, TransactionTrait};
+use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, FromQueryResult, ModelTrait, QueryFilter, QuerySelect, TransactionTrait};
+use serde::{Deserialize, Serialize};
 
 use crate::{
   config::{load_config, IdMethod},
@@ -11,6 +12,11 @@ use crate::{
   },
 };
 
+#[derive(Debug, Serialize, Deserialize, FromQueryResult)]
+struct NoteIdModel {
+  id: String,
+}
+
 // ノートを削除するコマンド
 // 1. 対象となるノートを検索する
 // 2. meilisearchのconfigがnoneでない場合にまずmeilisearchにdelete投げる
@@ -21,6 +27,10 @@ pub async fn delete(
   host: Option<&str>,
   days: u64,
   visibility: Option<Vec<NoteVisibilityEnum>>,
+  no_reaction: bool,
+  no_reply: bool,
+  no_renote: bool,
+  no_clipped: bool,
 ) -> Result<(), Box<dyn std::error::Error>> {
   // read config for judging whether meilisearch is enabled
   let config = load_config(config_path).unwrap();
@@ -30,6 +40,7 @@ pub async fn delete(
   tracing_subscriber::fmt()
     .with_max_level(tracing::Level::INFO)
     .init();
+
   let should_delete_from_meilisearch = visibility
     .as_ref()
     .map(|v| {
@@ -61,6 +72,32 @@ pub async fn delete(
       );
       // create meilisearch client
       let client = meilisearch_sdk::client::Client::new(url, Some(api_key)).unwrap();
+
+      // create pg client for meilisearch
+      let pg_client_meili = connect_pg(config_path).await.unwrap();
+      let mut pg_query = note::Entity::find().select_only().column(note::Column::Id);
+      // generate pg query for options
+      if no_reaction {
+        pg_query = pg_query.filter(note::Column::Reactions.ne("{}"));
+      }
+      if no_reply {
+        pg_query = pg_query.filter(note::Column::RepliesCount.eq(0));
+      }
+      if no_renote {
+        pg_query = pg_query.filter(note::Column::RenoteCount.eq(0));
+      }
+      if no_clipped {
+        pg_query = pg_query.filter(note::Column::ClippedCount.eq(0));
+      }
+
+      let ids: Vec<String> = pg_query
+        .into_model::<NoteIdModel>()
+        .all(&pg_client_meili)
+        .await?
+        .into_iter()
+        .map(|note| note.id)
+        .collect();
+
       // createdAtをfilterの条件としてmeilisearchから削除する
       let index = client.index(uid);
       let now = std::time::SystemTime::now()
@@ -68,34 +105,30 @@ pub async fn delete(
         .unwrap()
         .as_secs();
       let date = now - days * 24 * 60 * 60;
-      if date == 0 {
-        tracing::error!("Cannot specify today or future date");
-        std::process::exit(3);
-      }
 
       let created_at = format!("createdAt < {}", date);
-      let base_filter = created_at.clone();
-
-      let task = if let Some(host) = host {
-        let user_host = format!("userHost = \"{}\"", host);
-        let query = format!("{} AND {}", base_filter, user_host);
-        DocumentDeletionQuery::new(&index)
-          .with_filter(&query)
-          .execute::<MeiliNotes>()
-          .await
-          .unwrap()
+      let mut filters = vec![created_at.clone()];
+      if let Some(host) = host {
+        filters.push(format!("userHost = \"{}\"", host));
       } else {
-        let user_host = "userHost IS NOT NULL".to_string();
-        let query = format!("{} AND {}", base_filter, user_host);
-        DocumentDeletionQuery::new(&index)
-          .with_filter(&query)
-          .execute::<MeiliNotes>()
-          .await
-          .unwrap()
-      };
+        filters.push("userHost IS NOT NULL".to_string());
+      }
+
+      if !ids.is_empty() {
+        let id_filter = format!("id IN [{}]", ids.join(","));
+        filters.push(id_filter);
+      }
+      let filter = filters.join(" AND ");
+
+      // do query
+      let task = DocumentDeletionQuery::new(&index)
+        .with_filter(&filter)
+        .execute::<MeiliNotes>()
+        .await?;
 
       task.wait_for_completion(&client, None, None).await.unwrap();
       tracing::info!("Meilisearch delete task completed");
+      pg_client_meili.close().await?;
     }
   } else {
     tracing::info!("Meilisearch is not enabled or specified visibility is not including public or home, skipping");
@@ -145,8 +178,49 @@ pub async fn delete(
     query = query.filter(note::Column::Visibility.is_in(visibility));
   }
 
+  if no_reaction {
+    query = query.filter(note::Column::Reactions.ne("{}"));
+  }
+
+  if no_reply {
+    query = query.filter(note::Column::RepliesCount.eq(0));
+  }
+
+  if no_renote {
+    query = query.filter(note::Column::RenoteCount.eq(0));
+  }
+
+  if no_clipped {
+    query = query.filter(note::Column::ClippedCount.eq(0));
+  }
+
   // delete from database
   let notes = query.all(&txn).await?;
+  let mut reply_ids = std::collections::HashSet::new();
+  for note in &notes {
+    if let Some(reply_id) = &note.reply_id {
+      reply_ids.insert(reply_id.clone());
+    }
+  }
+
+  if !reply_ids.is_empty() {
+    let reply_ids_vec: Vec<String> = reply_ids.into_iter().collect();
+
+    let reply_targets = note::Entity::find()
+    .filter(note::Column::Id.is_in(reply_ids_vec))
+    .all(&txn)
+    .await?;
+
+    for target in reply_targets {
+      let mut target_model: note::ActiveModel = target.clone().into();
+
+      let new_count = if target.replies_count > 0 { target.replies_count - 1 } else { 0 };
+      target_model.replies_count = sea_orm::ActiveValue::Set(new_count);
+
+      target_model.update(&txn).await?;
+    }
+  }
+
   let chunk_size = 100;
   for chunk in notes.chunks(chunk_size) {
     let futures = chunk.iter().map(|note| note.clone().delete(&txn));
