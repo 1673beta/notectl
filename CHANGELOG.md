@@ -1,11 +1,12 @@
-# Unreleased
+# 0.2.0
 
 ## Release Date
-unreleased
+2025/03/02
 
 ## Feat
 - `user delete`で`username`を指定できるように
 - `note delete`で`visibility`を指定できるように
+- `note delete`で反応がないノートのみを削除できるように
 
 ## Fix
 
