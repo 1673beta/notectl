@@ -230,5 +230,6 @@ pub async fn delete(
 
   // commit transaction
   txn.commit().await?;
+  pg_client.close().await?;
   Ok(())
 }
