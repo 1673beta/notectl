@@ -196,6 +196,15 @@ pub async fn delete(
 
   // delete from database
   let notes = query.all(&txn).await?;
+
+  let total = notes.len();
+  if total == 0 {
+    tracing::info!("No notes to delete");
+    txn.commit().await?;
+    pg_client.close().await?;
+    return Ok(());
+  }
+
   let mut reply_ids = std::collections::HashSet::new();
   for note in &notes {
     if let Some(reply_id) = &note.reply_id {
