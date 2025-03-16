@@ -230,11 +230,8 @@ pub async fn delete(
     }
   }
 
-  let chunk_size = 100;
-  for chunk in notes.chunks(chunk_size) {
-    let futures = chunk.iter().map(|note| note.clone().delete(&txn));
-    futures::future::join_all(futures).await;
-    tracing::info!("Deleted {} notes", chunk.len());
+  for note in notes {
+    note.delete(&txn).await?;
   }
 
   // commit transaction
