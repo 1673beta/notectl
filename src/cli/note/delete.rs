@@ -196,6 +196,15 @@ pub async fn delete(
 
   // delete from database
   let notes = query.all(&txn).await?;
+
+  let total = notes.len();
+  if total == 0 {
+    tracing::info!("No notes to delete");
+    txn.commit().await?;
+    pg_client.close().await?;
+    return Ok(());
+  }
+
   let mut reply_ids = std::collections::HashSet::new();
   for note in &notes {
     if let Some(reply_id) = &note.reply_id {
@@ -221,14 +230,12 @@ pub async fn delete(
     }
   }
 
-  let chunk_size = 100;
-  for chunk in notes.chunks(chunk_size) {
-    let futures = chunk.iter().map(|note| note.clone().delete(&txn));
-    futures::future::join_all(futures).await;
-    tracing::info!("Deleted {} notes", chunk.len());
+  for note in notes {
+    note.delete(&txn).await?;
   }
 
   // commit transaction
   txn.commit().await?;
+  pg_client.close().await?;
   Ok(())
 }
