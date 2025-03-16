@@ -1,3 +1,11 @@
+# 0.2.1
+
+## Release Date
+Unreleased
+
+## Fix
+- `note delete`でデータ量が多い際メモリリークすることがある問題
+
 # 0.2.0
 
 ## Release Date
