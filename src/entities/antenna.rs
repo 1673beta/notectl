@@ -35,6 +35,8 @@ pub struct Model {
   pub local_only: bool,
   #[sea_orm(column_name = "excludeBots")]
   pub exclude_bots: bool,
+  #[sea_orm(column_name = "excludeNotesInSensitiveChannel")]
+  pub exclude_notes_in_sensitive_channel: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -57,6 +57,8 @@ pub struct Model {
 pub enum Relation {
   #[sea_orm(has_many = "super::channel::Entity")]
   Channel,
+  #[sea_orm(has_many = "super::chat_message::Entity")]
+  ChatMessage,
   #[sea_orm(
     belongs_to = "super::drive_folder::Entity",
     from = "Column::FolderId",
@@ -82,6 +84,12 @@ pub enum Relation {
 impl Related<super::channel::Entity> for Entity {
   fn to() -> RelationDef {
     Relation::Channel.def()
+  }
+}
+
+impl Related<super::chat_message::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::ChatMessage.def()
   }
 }
 

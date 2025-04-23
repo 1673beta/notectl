@@ -86,8 +86,6 @@ pub struct Model {
   pub object_storage_port: Option<i32>,
   #[sea_orm(column_name = "objectStorageUseSSL")]
   pub object_storage_use_ssl: bool,
-  #[sea_orm(column_name = "proxyAccountId")]
-  pub proxy_account_id: Option<String>,
   #[sea_orm(column_name = "objectStorageUseProxy")]
   pub object_storage_use_proxy: bool,
   #[sea_orm(column_name = "enableHcaptcha")]
@@ -235,13 +233,15 @@ pub struct Model {
   pub prohibited_words_for_name_of_user: Vec<String>,
   #[sea_orm(column_name = "googleAnalyticsMeasurementId")]
   pub google_analytics_measurement_id: Option<String>,
+  #[sea_orm(column_name = "rootUserId")]
+  pub root_user_id: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
   #[sea_orm(
     belongs_to = "super::user::Entity",
-    from = "Column::ProxyAccountId",
+    from = "Column::RootUserId",
     to = "super::user::Column::Id",
     on_update = "NoAction",
     on_delete = "SetNull"
