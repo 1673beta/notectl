@@ -43,7 +43,10 @@ pub async fn delete(
   let accounts = query.all(&txn).await?;
 
   for account in accounts {
-    let system_account = account.find_related(system_account::Entity).one(&txn).await?;
+    let system_account = account
+      .find_related(system_account::Entity)
+      .one(&txn)
+      .await?;
     if system_account.is_some() {
       tracing::error!("Cannot delete system account: {}", account.username);
       continue;
