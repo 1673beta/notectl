@@ -4,7 +4,7 @@ use sea_orm::{ColumnTrait, Condition, EntityTrait, ModelTrait, QueryFilter, Tran
 
 use crate::consts::UserIdentifier;
 use crate::db::postgres::connect_pg;
-use crate::entities::{prelude::*, user};
+use crate::entities::{prelude::*, system_account, user};
 
 pub async fn delete(
   config_path: &str,
@@ -43,13 +43,22 @@ pub async fn delete(
   let accounts = query.all(&txn).await?;
 
   for account in accounts {
-    if account.host.is_none() {
-      return Err("This account is not remote account.".into());
-    } else if account.is_root {
-      return Err("This account is root account.".into());
-    } else {
-      account.delete(&txn).await?;
+    let system_account = account
+      .find_related(system_account::Entity)
+      .one(&txn)
+      .await?;
+    if system_account.is_some() {
+      tracing::error!("Cannot delete system account: {}", account.username);
+      continue;
     }
+
+    if account.host.is_none() {
+      tracing::error!("Cannot delete local account: {}", account.username);
+      continue;
+    }
+
+    tracing::info!("Deleting account: {}", account.username);
+    account.delete(&txn).await?;
   }
   txn.commit().await?;
   Ok(())

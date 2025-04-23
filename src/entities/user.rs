@@ -35,8 +35,6 @@ pub struct Model {
   pub is_bot: bool,
   #[sea_orm(column_name = "isCat")]
   pub is_cat: bool,
-  #[sea_orm(column_name = "isRoot")]
-  pub is_root: bool,
   pub emojis: Vec<String>,
   pub host: Option<String>,
   pub inbox: Option<String>,
@@ -81,6 +79,8 @@ pub struct Model {
   pub make_notes_followers_only_before: Option<i32>,
   #[sea_orm(column_name = "makeNotesHiddenBefore")]
   pub make_notes_hidden_before: Option<i32>,
+  #[sea_orm(column_name = "chatScope")]
+  pub chat_scope: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -107,6 +107,12 @@ pub enum Relation {
   ChannelFavorite,
   #[sea_orm(has_many = "super::channel_following::Entity")]
   ChannelFollowing,
+  #[sea_orm(has_many = "super::chat_room::Entity")]
+  ChatRoom,
+  #[sea_orm(has_many = "super::chat_room_invitation::Entity")]
+  ChatRoomInvitation,
+  #[sea_orm(has_many = "super::chat_room_membership::Entity")]
+  ChatRoomMembership,
   #[sea_orm(has_many = "super::clip::Entity")]
   Clip,
   #[sea_orm(has_many = "super::clip_favorite::Entity")]
@@ -171,6 +177,8 @@ pub enum Relation {
   Signin,
   #[sea_orm(has_many = "super::sw_subscription::Entity")]
   SwSubscription,
+  #[sea_orm(has_many = "super::system_account::Entity")]
+  SystemAccount,
   #[sea_orm(has_many = "super::user_group::Entity")]
   UserGroup,
   #[sea_orm(has_many = "super::user_group_invitation::Entity")]
@@ -262,6 +270,24 @@ impl Related<super::channel_favorite::Entity> for Entity {
 impl Related<super::channel_following::Entity> for Entity {
   fn to() -> RelationDef {
     Relation::ChannelFollowing.def()
+  }
+}
+
+impl Related<super::chat_room::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::ChatRoom.def()
+  }
+}
+
+impl Related<super::chat_room_invitation::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::ChatRoomInvitation.def()
+  }
+}
+
+impl Related<super::chat_room_membership::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::ChatRoomMembership.def()
   }
 }
 
@@ -406,6 +432,12 @@ impl Related<super::signin::Entity> for Entity {
 impl Related<super::sw_subscription::Entity> for Entity {
   fn to() -> RelationDef {
     Relation::SwSubscription.def()
+  }
+}
+
+impl Related<super::system_account::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::SystemAccount.def()
   }
 }
 

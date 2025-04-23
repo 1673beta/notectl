@@ -37,6 +37,8 @@ pub struct Model {
   pub display_order: i32,
   #[sea_orm(column_name = "isExplorable")]
   pub is_explorable: bool,
+  #[sea_orm(column_name = "preserveAssignmentOnMoveAccount")]
+  pub preserve_assignment_on_move_account: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

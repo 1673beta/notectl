@@ -6,7 +6,7 @@ endif
 SRC := Cargo.toml
 
 .PHONY: generate-entities-mac
-generate-entities:
+generate-entities-mac:
 	rm -rf src/entities 
 	sea-orm-cli generate entity \
 		--output-dir='src/entities' \

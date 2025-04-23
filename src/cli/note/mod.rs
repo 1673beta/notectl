@@ -21,7 +21,7 @@ pub enum NoteSubCommand {
     host: Option<String>,
     #[arg(short = 'd', long = "days")]
     days: u64,
-    #[arg(short = 'v', long = "visibility", value_delimiter = ',')]
+    #[arg(short = 'v', long = "visibility", value_delimiter = ',', value_parser = clap::value_parser!(NoteVisibilityEnum))]
     visibility: Option<Vec<NoteVisibilityEnum>>,
     #[arg(long = "no-interaction", conflicts_with_all = ["no_reaction", "no_reply", "no_renote", "no_clipped"], action = clap::ArgAction::SetTrue)]
     no_interaction: bool,
