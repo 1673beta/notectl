@@ -7,9 +7,9 @@ SRC := Cargo.toml
 
 .PHONY: generate-entities-mac
 generate-entities-mac:
-	rm -rf src/entities 
+	@mkdir -p src/entities/$(SOFTWARE_NAME)/$(SOFTWARE_VERSION) && \
 	sea-orm-cli generate entity \
-		--output-dir='src/entities' \
+		--output-dir='src/entities/$(SOFTWARE_NAME)/$(SOFTWARE_VERSION)' \
 		--database-url='postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)' \
 		--date-time-crate='chrono' \
 		--with-serde='both' \
