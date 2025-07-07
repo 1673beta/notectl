@@ -15,6 +15,10 @@ devcontainerはVSCodeの拡張機能`Dev Containers(ms-azuretools.vscode-docker)
 以下の環境が必要です。
 - Rust 1.81.0以降
 - sea-orm-cli
+- jq
+- GNU make
+- GNU sed
+- git
 
 また、MisskeyをローカルやDockerで動かす必要がある場合もあります。その際には次の手順を参考にローカルにMisskeyを立ててください。  
 参考: [Misskeyサーバーの作成](https://misskey-hub.net/ja/docs/for-admin/install/guides/)
