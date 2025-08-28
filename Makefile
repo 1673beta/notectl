@@ -3,37 +3,46 @@ include .env
 export
 endif
 
-ifeq ($(SOFTWARE_NAME),misskey)
-    REPO_URL := https://github.com/misskey-dev/misskey.git
-    REPO_BRANCH := master
-else ifeq ($(SOFTWARE_NAME),cherrypick)
-    REPO_URL := https://github.com/kokonect-link/cherrypick.git
-    REPO_BRANCH := master
-else ifeq ($(SOFTWARE_NAME),sharkey)
-    REPO_URL := https://activitypub.software/TransFem-org/Sharkey.git
-    REPO_BRANCH := stable
-endif
-
 SRC := Cargo.toml
 
-.PHONY: extract-version
-extract-version:
-    @mkdir -p temp && \
-	echo "Cloning $(SOFTWARE_NAME) repository..." && \
-    git clone $(REPO_URL) -b $(REPO_BRANCH) --recurse-submodules temp/$(SOFTWARE_NAME) && \
-    @echo "Extracting version from $(SOFTWARE_NAME) ..." && \
-	if [ -f temp/$(SOFTWARE_NAME)/package.json ]; then \
-		VERSION=$$(jq -r '.version' temp/$(SOFTWARE_NAME)/package.json); \
-		echo "Version: $$VERSION"; \
-		export  SOFTWARE_VERSION=$$VERSION;\
-	else \
-		echo "Version not found in package.json"; \
+.PHONY: set-env
+set-env:
+	@if [ -z "$(SOFTWARE_NAME)" ]; then \
+		echo "SOFTWARE_NAME is not set. Supported variables: misskey, cherrypick, sharkey": \
 		exit 1; \
-	fi && \
+	fi
+	@./scripts/version.sh
+
+.PHONY: up
+up:
+	docker compose --env-file .env.software -f compose.local.yml up -d
+
+.PHONY: down
+down:
+	docker compose --env-file .env.software -f compose.local.yml down
+
+.PHONY: reset-db
+reset-db:
+	@echo "Resetting database..."
+	docker compose --env-file .env.software -f compose.local.yml down -v
+	docker compose --env-file .env.software -f compose.local.yml rm -f db
+	docker volume prune -f
+	sudo rm -rf ./db/*
+	sudo rm -rf ./redis/*
+	sudo rm -rf ./meilisearch/*
+	@echo "Database reset complete."
+
+.PHONY: db-init
+db-init:
+	sudo docker compose --env-file .env.software -f compose.local.yml run --rm web pnpm run init
 
 .PHONY: generate-entities-mac
 generate-entities-mac:
-	@mkdir -p src/entities/$(SOFTWARE_NAME)/$(SOFTWARE_VERSION) && \
+	$(MAKE) reset-db && \
+	$(MAKE) db-init && \
+	$(MAKE) up && \
+	sleep 10 && \
+	mkdir -p src/entities/$(SOFTWARE_NAME)/$(SOFTWARE_VERSION) && \
 	sea-orm-cli generate entity \
 		--output-dir='src/entities/$(SOFTWARE_NAME)/$(SOFTWARE_VERSION)' \
 		--database-url='postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DB)' \
@@ -42,9 +51,9 @@ generate-entities-mac:
 		--with-prelude='all-allow-unused-imports' && \
 	gsed -i '3i use clap::ValueEnum;' src/entities/sea_orm_active_enums.rs && \
 	gsed -i 's/#\[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)\]/#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ValueEnum)]/g' src/entities/sea_orm_active_enums.rs && \
-	cargo fmt
+	cargo fmt && \
+	$(MAKE) down
 
-.PHONY: migrate
-migrate:
-	$(MAKE) extract-version && \
-	$(MAKE) generate-entities-mac
+.PHONY: clean-cache
+clean-cache:
+	cargo clean
