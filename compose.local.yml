@@ -12,8 +12,8 @@ services:
       - internal_network
       - external_network
     volumes:
-      - ./.config/:/misskey/.config
-      - ./files:/misskey/files
+      - ./.config/:/${SOFTWARE_NAME}/.config
+      - ./files:/${SOFTWARE_NAME}/files
 
   db:
     image: postgres:15-alpine
