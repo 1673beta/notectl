@@ -13,3 +13,4 @@
 /meilisearch
 .config/default.yml
 .config/development.yml
+.env.software

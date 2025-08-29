@@ -3,15 +3,12 @@ include .env
 export
 endif
 
-SRC := Cargo.toml
+ifneq (,$(wildcard ./.env.software))
+include .env.software
+export
+endif
 
-.PHONY: set-env
-set-env:
-	@if [ -z "$(SOFTWARE_NAME)" ]; then \
-		echo "SOFTWARE_NAME is not set. Supported variables: misskey, cherrypick, sharkey": \
-		exit 1; \
-	fi
-	@./scripts/version.sh
+SRC := Cargo.toml
 
 .PHONY: up
 up:
@@ -49,8 +46,6 @@ generate-entities-mac:
 		--date-time-crate='chrono' \
 		--with-serde='both' \
 		--with-prelude='all-allow-unused-imports' && \
-	gsed -i '3i use clap::ValueEnum;' src/entities/sea_orm_active_enums.rs && \
-	gsed -i 's/#\[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)\]/#[derive(Debug, Clone, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize, ValueEnum)]/g' src/entities/sea_orm_active_enums.rs && \
 	cargo fmt && \
 	$(MAKE) down
 
