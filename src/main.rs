@@ -1,5 +1,4 @@
 mod cli;
-mod config; // TODO: 消す
 mod configs; // TODO: rename
 mod consts;
 mod db;

@@ -1,3 +1,14 @@
+# Unreleased
+
+## Release Date
+Unreleased
+
+## Breaking Change
+`config`コマンドは廃止されました
+
+## Feat
+
+
 # 0.2.1
 
 ## Release Date

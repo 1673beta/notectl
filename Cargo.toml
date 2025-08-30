@@ -3,6 +3,9 @@ name = "notectl"
 version = "0.2.0"
 edition = "2021"
 
+[lib]
+proc-macro = true
+
 [dependencies]
 anstyle = "1.0.10"
 base64 = "0.22.1"
@@ -18,7 +21,7 @@ openssl = "0.10.70"
 rand = { version = "0.8.5", features = ["serde"] }
 redis = { version = "0.27.6", features = ["tokio-rustls-comp", "cluster", "json", "r2d2"] }
 regex = "1.11.1"
-sea-orm = { version = "1.1.6", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "debug-print"] }
+sea-orm = { version = "1.1.14", features = ["sqlx-postgres", "runtime-tokio-rustls", "macros", "debug-print"] }
 serde = { version = "1.0.215", features = ["derive", "serde_derive"] }
 serde_json = "1.0.133"
 serde_yml = "0.0.12"
