@@ -30,9 +30,8 @@ fn get_random() -> String {
     .collect()
 }
 
-// TODO: Resultにする
-pub fn gen_meid(time: u64) -> String {
-  format!("{}{}", get_time(time), get_random())
+pub fn gen_meid(time: u64) -> Result<String, &'static str> {
+  Ok(format!("{}{}", get_time(time), get_random()))
 }
 
 pub fn parse_meid(id: &str) -> Result<SystemTime, ParseIntError> {

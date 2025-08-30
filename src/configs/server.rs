@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::RwLock;
 use std::{fs, path::Path};
-use syntect::easy::HighlightLines;
-use syntect::highlighting::{Style, ThemeSet};
-use syntect::parsing::SyntaxSet;
-use syntect::util::{as_24_bit_terminal_escaped, LinesWithEndings};
+use thiserror::Error;
+use clap::ValueEnum;
 
 static CONFIG: once_cell::sync::OnceCell<RwLock<MisskeyConfig>> = once_cell::sync::OnceCell::new();
 
@@ -22,6 +21,7 @@ pub struct MisskeyConfig {
   pub redis_for_pubsub: Option<RedisConfig>,
   pub redis_for_job_queue: Option<RedisConfig>,
   pub redis_for_timelines: Option<RedisConfig>,
+  pub redis_for_reactions: Option<RedisConfig>,
   #[serde(rename = "fulltextSearch")]
   pub full_text_search: Option<FullTextSearch>,
   pub meilisearch: Option<MeilisearchConfig>,
@@ -66,9 +66,16 @@ pub struct DbConfig {
   pub extra: Option<DbExtraConfig>,
 }
 
+// TODO: pgのextraオプションへの追加対応 https://github.com/misskey-dev/misskey/issues/15108
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DbExtraConfig {
-  ssl: bool,
+  pub ssl: bool,
+  pub statement_timeout: Option<u64>,
+  pub query_timeout: Option<u64>,
+  pub lock_timeout: Option<u64>,
+  #[serde(flatten)]
+  #[serde(skip_serializing)]
+  _ignored: HashMap<String, serde_yml::Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -88,12 +95,13 @@ pub enum RedisFamily {
   IPv6 = 6,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct FullTextSearch {
   pub provider: FullTextSearchProvider,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+// TODO: サメがtsvectorを使う場合の設定も追加
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, ValueEnum)]
 #[serde(rename_all = "camelCase")]
 pub enum FullTextSearchProvider {
   #[serde(rename = "sqlLike")]
@@ -123,7 +131,7 @@ pub enum MeilisearchScope {
   Custom(Vec<String>),
 }
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Serialize, Deserialize, Clone, Copy, ValueEnum)]
 #[serde(rename_all = "lowercase")]
 pub enum IdMethod {
   Aid,
@@ -160,25 +168,75 @@ pub enum OutgoingAddressFamily {
   Dual,
 }
 
-pub fn load_config(config_path: &str) -> Result<MisskeyConfig, Box<dyn std::error::Error>> {
-  let config_path = Path::new(config_path);
-  let config_content = fs::read_to_string(config_path).expect("Failed to read config file");
-  let config: MisskeyConfig =
-    serde_yml::from_str(&config_content).expect("Failed to parse config file");
-  Ok(config)
+#[derive(Debug, Error)]
+pub enum ConfigError {
+  #[error("Config not initialized")]
+  ConfigNotInitialized,
+
+  #[error("File not found: {path}")]
+  ConfigFileNotFound { path: String },
+
+  #[error("Failed to read config file: {0}")]
+  ConfigFileReadError(#[from] std::io::Error),
+
+  #[error("Failed to parse config file: {0}")]
+  ConfigFileParseError(#[from] serde_yml::Error),
+
+  #[error("Validation error: {0}")]
+  ConfigValidationError(String),
+
+  #[error("Initialization error")]
+  ConfigInitializationError,
 }
 
-pub fn print_config(config: &MisskeyConfig) -> Result<(), Box<dyn std::error::Error>> {
-  let json = serde_json::to_string_pretty(config)?;
-  let ps = SyntaxSet::load_defaults_newlines();
-  let ts = ThemeSet::load_defaults();
+pub struct ServerConfig;
 
-  let syntax = ps.find_syntax_by_extension("json").unwrap();
-  let mut h = HighlightLines::new(syntax, &ts.themes["Solarized (dark)"]);
-  for line in LinesWithEndings::from(&json) {
-    let ranges: Vec<(Style, &str)> = h.highlight_line(line, &ps).unwrap();
-    let escaped = as_24_bit_terminal_escaped(&ranges[..], true);
-    println!("{}", escaped);
+impl ServerConfig {
+  pub fn init(config_path: &str) -> Result<(), ConfigError> {
+    let config = Self::load_from_file(config_path)?;
+
+    CONFIG
+      .set(RwLock::new(config))
+      .map_err(|_| ConfigError::ConfigInitializationError);
+
+    Ok(())
   }
-  Ok(())
+
+  fn load_from_file(config_path: &str) -> Result<MisskeyConfig, ConfigError> {
+    let path = Path::new(config_path);
+
+    if !path.exists() {
+      return Err(ConfigError::ConfigFileNotFound {
+        path: config_path.to_string(),
+      });
+    }
+
+    let config_content = match fs::read_to_string(path) {
+      Ok(content) => content,
+      Err(e) => return Err(ConfigError::ConfigFileReadError(e)),
+    };
+    let config: MisskeyConfig = match serde_yml::from_str(&config_content) {
+      Ok(cfg) => cfg,
+      Err(e) => return Err(ConfigError::ConfigFileParseError(e)),
+    };
+
+    Ok(config)
+  }
+
+  pub fn get() -> Result<std::sync::RwLockReadGuard<'static, MisskeyConfig>, ConfigError> {
+    let config = CONFIG.get().ok_or(ConfigError::ConfigNotInitialized)?;
+    config.read().map_err(|_| ConfigError::ConfigNotInitialized)
+  }
+
+  pub fn get_id_method() -> Result<IdMethod, ConfigError> {
+    Self::get().map(|cfg| cfg.id)
+  }
+
+  pub fn get_search_provider() -> Result<Option<FullTextSearchProvider>, ConfigError> {
+    Self::get().map(|cfg| cfg.full_text_search.map(|provider| provider.provider))
+  }
+
+  pub fn get_meilisearch_config() -> Result<Option<MeilisearchConfig>, ConfigError> {
+    Self::get().map(|cfg| cfg.meilisearch.clone())
+  }
 }

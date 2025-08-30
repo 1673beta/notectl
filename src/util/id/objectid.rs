@@ -24,9 +24,8 @@ fn get_random() -> String {
     .collect()
 }
 
-// TODO: Resultにする
-pub fn gen_object_id(t: u64) -> String {
-  format!("{}{}", get_time(t), get_random())
+pub fn gen_object_id(t: u64) -> Result<String, &'static str> {
+  Ok(format!("{}{}", get_time(t), get_random()))
 }
 
 pub fn parse_object_id(id: &str) -> Result<SystemTime, ParseIntError> {
