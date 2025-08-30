@@ -1,4 +1,3 @@
-use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::WebpushCommand;
 use clap::{ColorChoice, Parser, Subcommand};
 
@@ -23,8 +22,6 @@ pub struct Cli {
 pub enum Commands {
   #[command(about = "About webpush notification")]
   Webpush(WebpushCommand),
-  #[command(about = "About your misskey configuration")]
-  Config(ConfigCommand),
   #[command(about = "About Meilisearch")]
   Search(SearchCommand),
   #[command(about = "About remote server")]
@@ -42,11 +39,6 @@ pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
   ServerConfig::init(&args.config_path)?;
   match args.cmd {
     Commands::Webpush(cmd) => {
-      if let Err(e) = cmd.exec() {
-        eprintln!("{}", e);
-      }
-    }
-    Commands::Config(cmd) => {
       if let Err(e) = cmd.exec() {
         eprintln!("{}", e);
       }
