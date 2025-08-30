@@ -1,6 +1,6 @@
 use crate::util::id::*;
 use thiserror::Error;
-use crate::configs::server::{ServerConfig, IdMethod};
+use crate::configs::server::IdMethod;
 
 #[derive(Error, Debug)]
 pub enum IdServiceError {
