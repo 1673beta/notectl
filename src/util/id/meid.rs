@@ -34,7 +34,7 @@ pub fn gen_meid(time: u64) -> Result<String, &'static str> {
   Ok(format!("{}{}", get_time(time), get_random()))
 }
 
-pub fn parse_meid(id: &str) -> Result<SystemTime, ParseIntError> {
+pub fn parse(id: &str) -> Result<SystemTime, ParseIntError> {
   let timestamp = u64::from_str_radix(&id[0..12], 16).unwrap() - 0x800000000000;
   let time = SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp);
   Ok(time)
