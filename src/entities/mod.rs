@@ -1,5 +1,7 @@
 pub mod misskey;
 pub mod cherrypick;
 
-pub mod traits;
-pub mod version;
+pub mod prelude {
+    pub use super::misskey::prelude::*;
+    pub use super::cherrypick::prelude::*;
+}
