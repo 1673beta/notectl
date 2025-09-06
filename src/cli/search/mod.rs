@@ -20,18 +20,9 @@ pub struct SearchCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum SearchSubCommand {
-  List {
-    #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
-    config_path: String,
-  },
-  Health {
-    #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
-    config_path: String,
-  },
-  Drop {
-    #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
-    config_path: String,
-  },
+  List,
+  Health,
+  Drop,
   Deploy {
     #[arg(short = 'c', long = "config", default_value = ".config/default.yml")]
     config_path: String,
@@ -41,14 +32,14 @@ pub enum SearchSubCommand {
 impl SearchCommand {
   pub async fn exec(&self) -> Result<(), Box<dyn std::error::Error>> {
     match &self.subcmd {
-      SearchSubCommand::List { config_path } => {
-        list(config_path).await?;
+      SearchSubCommand::List => {
+        list().await?;
       }
-      SearchSubCommand::Health { config_path } => {
-        health(config_path).await?;
+      SearchSubCommand::Health => {
+        health().await?;
       }
-      SearchSubCommand::Drop { config_path } => {
-        drop(config_path).await?;
+      SearchSubCommand::Drop => {
+        drop().await?;
       }
       SearchSubCommand::Deploy { config_path } => {
         deploy(config_path).await?;

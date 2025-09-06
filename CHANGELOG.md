@@ -4,7 +4,8 @@
 Unreleased
 
 ## Breaking Change
-`config`コマンドは廃止されました
+- `config`コマンドは廃止されました
+  - これは一時的な措置で、将来的に復活する予定です
 
 ## Feat
 
