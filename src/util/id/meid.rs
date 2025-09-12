@@ -41,7 +41,7 @@ pub fn parse(id: &str) -> Result<SystemTime, ParseIntError> {
 }
 
 pub fn parse_meid_with_format(id: &str) -> DateTime<Utc> {
-  let time = parse_meid(id).unwrap();
+  let time = parse(id).unwrap();
   let duration = time.duration_since(SystemTime::UNIX_EPOCH).unwrap();
   Utc
     .timestamp_millis_opt(duration.as_millis() as i64)

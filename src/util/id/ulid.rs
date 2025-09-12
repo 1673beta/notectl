@@ -1,7 +1,8 @@
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use ulid::{DecodeError, Generator, Ulid};
-
+use ulid::{ Generator, Ulid};
 use chrono::{DateTime, Local};
+
+pub use ulid::DecodeError;
 
 pub fn parse(id: &str) -> Result<SystemTime, DecodeError> {
   let ulid = Ulid::from_string(id)?;
@@ -22,3 +23,5 @@ pub fn gen_ulid(time: u64) -> Result<String, &'static str> {
   let ulid = gen.generate_from_datetime(now).unwrap().to_string();
   Ok(ulid)
 }
+
+

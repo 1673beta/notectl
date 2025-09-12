@@ -35,7 +35,7 @@ pub fn parse(id: &str) -> Result<SystemTime, ParseIntError> {
 }
 
 pub fn parse_object_id_with_format(id: &str) -> DateTime<Utc> {
-  let time = parse_object_id(id).unwrap();
+  let time = parse(id).unwrap();
 
   let duration = time.duration_since(SystemTime::UNIX_EPOCH).unwrap();
   Utc

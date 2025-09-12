@@ -14,7 +14,22 @@ pub enum IdServiceError {
   UnsafeIdError,
 
   #[error("Parsing error: {0}")]
-  ParseError(#[from] std::num::ParseIntError),
+  ParseError(#[from] ParseError),
+}
+
+#[derive(Debug, Clone, Error)]
+pub enum ParseError {
+  ParseIntError(#[from] std::num::ParseIntError),
+  UlidDecodeError(#[from] ulid::DecodeError),
+}
+
+impl std::fmt::Display for ParseError {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      ParseError::ParseIntError(e) => write!(f, "ParseIntError: {}", e),
+      ParseError::UlidDecodeError(e) => write!(f, "UlidDecodeError: {}", e),
+    }
+  }
 }
 
 pub struct IdService {
@@ -41,12 +56,12 @@ impl IdService {
   }
 
   pub fn parse(&self, id: &str) -> Result<std::time::SystemTime, IdServiceError> {
-    let result = match self.method {
-      IdMethod::Aid => aid::parse(id),
-      IdMethod::Aidx => aidx::parse(id),
-      IdMethod::Meid => meid::parse(id),
-      IdMethod::ObjectId => objectid::parse(id),
-      IdMethod::Ulid => ulid::parse(id),
+    let result: Result<std::time::SystemTime, ParseError> = match self.method {
+      IdMethod::Aid => aid::parse(id).map_err(|e| ParseError::ParseIntError(e)),
+      IdMethod::Aidx => aidx::parse(id).map_err(|e| ParseError::ParseIntError(e)),
+      IdMethod::Meid => meid::parse(id).map_err(|e| ParseError::ParseIntError(e)),
+      IdMethod::ObjectId => objectid::parse(id).map_err(|e| ParseError::ParseIntError(e)),
+      IdMethod::Ulid => ulid::parse(id).map_err(|e| ParseError::UlidDecodeError(e)),
     };
 
     result.map_err(|e| IdServiceError::ParseError(e))
