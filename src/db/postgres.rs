@@ -1,9 +1,9 @@
 use sea_orm::{ConnectOptions, Database, DatabaseConnection, DbConn, DbErr};
 
-use crate::config;
+use crate::configs::server::ServerConfig;
 
 pub async fn connect_pg(config_path: &str) -> Result<DbConn, DbErr> {
-  let config = config::load_config(config_path).unwrap();
+  let config = ServerConfig::get().map_err(|e| DbErr::Custom(e.to_string()))?;
   let db_url = format!(
     "postgres://{}:{}@{}:{}/{}",
     config.db.user, config.db.pass, config.db.host, config.db.port, config.db.db
@@ -16,6 +16,7 @@ pub async fn connect_pg(config_path: &str) -> Result<DbConn, DbErr> {
     .min_connections(2)
     .max_connections(100);
 
-  let db: DatabaseConnection = Database::connect(opt).await?;
+  // TODO: 接続に失敗したときにリトライするようにする
+  let db = Database::connect(opt).await?;
   Ok(db)
 }

@@ -1,18 +1,20 @@
 services:
-  misskey:
-    image: misskey/misskey:latest
+  web:
+    image: ${CONTAINER_IMAGE}:${SOFTWARE_VERSION}
     ports:
       - "3030:3030"
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - internal_network
       - external_network
     volumes:
-      - ./.config/:/misskey/.config
-      - ./files:/misskey/files
-    
+      - ./.config/:/${SOFTWARE_NAME}/.config
+      - ./files:/${SOFTWARE_NAME}/files
+
   db:
     image: postgres:15-alpine
     ports:
@@ -26,6 +28,11 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
@@ -36,6 +43,11 @@ services:
       - external_network
     volumes:
       - ./redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   meilisearch:
     image: getmeili/meilisearch:latest

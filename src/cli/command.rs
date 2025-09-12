@@ -1,4 +1,3 @@
-use crate::cli::config::show::ConfigCommand;
 use crate::cli::vapid::WebpushCommand;
 use clap::{ColorChoice, Parser, Subcommand};
 
@@ -7,20 +6,22 @@ use crate::cli::note::NoteCommand;
 use crate::cli::remote::RemoteCommand;
 use crate::cli::search::SearchCommand;
 use crate::cli::user::UserCommand;
+use crate::configs::server::ServerConfig;
 
+// TODO: globalな引数にconfig_pathを追加する
 #[derive(Debug, Parser)]
 #[command(name = "notectl", about = "A CLI tool for managing misskey", color = ColorChoice::Always, styles = super::style::style())]
 pub struct Cli {
   #[clap(subcommand)]
   pub cmd: Commands,
+  #[arg(short = 'c', long = "config", global = true)]
+  pub config_path: String,
 }
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
   #[command(about = "About webpush notification")]
   Webpush(WebpushCommand),
-  #[command(about = "About your misskey configuration")]
-  Config(ConfigCommand),
   #[command(about = "About Meilisearch")]
   Search(SearchCommand),
   #[command(about = "About remote server")]
@@ -35,13 +36,9 @@ pub enum Commands {
 
 pub async fn exec() -> Result<(), Box<dyn std::error::Error>> {
   let args = Cli::parse();
+  ServerConfig::init(&args.config_path)?;
   match args.cmd {
     Commands::Webpush(cmd) => {
-      if let Err(e) = cmd.exec() {
-        eprintln!("{}", e);
-      }
-    }
-    Commands::Config(cmd) => {
       if let Err(e) = cmd.exec() {
         eprintln!("{}", e);
       }

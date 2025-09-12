@@ -1,7 +1,8 @@
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use ulid::{DecodeError, Generator, Ulid};
-
+use ulid::{ Generator, Ulid};
 use chrono::{DateTime, Local};
+
+pub use ulid::DecodeError;
 
 pub fn parse(id: &str) -> Result<SystemTime, DecodeError> {
   let ulid = Ulid::from_string(id)?;
@@ -15,11 +16,12 @@ pub fn formatted_time(id: &str) -> String {
   datetime.to_rfc3339()
 }
 
-#[allow(clippy::let_and_return)]
-pub fn gen_ulid(time: u64) -> String {
+pub fn gen_ulid(time: u64) -> Result<String, &'static str> {
   let mut gen = Generator::new();
-  // ここのSystemTime::now()を引数のi64から取得するようにする
+  // TODO: ここのSystemTime::now()を引数のi64から取得するようにする
   let now = SystemTime::UNIX_EPOCH + Duration::from_millis(time);
   let ulid = gen.generate_from_datetime(now).unwrap().to_string();
-  ulid
+  Ok(ulid)
 }
+
+

@@ -30,19 +30,18 @@ fn get_random() -> String {
     .collect()
 }
 
-// TODO: Resultにする
-pub fn gen_meid(time: u64) -> String {
-  format!("{}{}", get_time(time), get_random())
+pub fn gen_meid(time: u64) -> Result<String, &'static str> {
+  Ok(format!("{}{}", get_time(time), get_random()))
 }
 
-pub fn parse_meid(id: &str) -> Result<SystemTime, ParseIntError> {
+pub fn parse(id: &str) -> Result<SystemTime, ParseIntError> {
   let timestamp = u64::from_str_radix(&id[0..12], 16).unwrap() - 0x800000000000;
   let time = SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp);
   Ok(time)
 }
 
 pub fn parse_meid_with_format(id: &str) -> DateTime<Utc> {
-  let time = parse_meid(id).unwrap();
+  let time = parse(id).unwrap();
   let duration = time.duration_since(SystemTime::UNIX_EPOCH).unwrap();
   Utc
     .timestamp_millis_opt(duration.as_millis() as i64)

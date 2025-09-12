@@ -1,5 +1,8 @@
 use meilisearch_sdk::documents::DocumentDeletionQuery;
-use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, FromQueryResult, ModelTrait, QueryFilter, QuerySelect, TransactionTrait};
+use sea_orm::{
+  ActiveModelTrait, ColumnTrait, EntityTrait, FromQueryResult, ModelTrait, QueryFilter,
+  QuerySelect, TransactionTrait,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -216,14 +219,18 @@ pub async fn delete(
     let reply_ids_vec: Vec<String> = reply_ids.into_iter().collect();
 
     let reply_targets = note::Entity::find()
-    .filter(note::Column::Id.is_in(reply_ids_vec))
-    .all(&txn)
-    .await?;
+      .filter(note::Column::Id.is_in(reply_ids_vec))
+      .all(&txn)
+      .await?;
 
     for target in reply_targets {
       let mut target_model: note::ActiveModel = target.clone().into();
 
-      let new_count = if target.replies_count > 0 { target.replies_count - 1 } else { 0 };
+      let new_count = if target.replies_count > 0 {
+        target.replies_count - 1
+      } else {
+        0
+      };
       target_model.replies_count = sea_orm::ActiveValue::Set(new_count);
 
       target_model.update(&txn).await?;

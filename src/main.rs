@@ -1,8 +1,9 @@
 mod cli;
-mod config;
+mod configs; // TODO: rename
 mod consts;
 mod db;
 mod entities;
+mod services;
 mod util;
 
 #[tokio::main]

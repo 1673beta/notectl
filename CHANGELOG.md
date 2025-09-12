@@ -1,3 +1,15 @@
+# Unreleased
+
+## Release Date
+Unreleased
+
+## Breaking Change
+- `config`コマンドは廃止されました
+  - これは一時的な措置で、将来的に復活する予定です
+
+## Feat
+
+
 # 0.2.1
 
 ## Release Date
